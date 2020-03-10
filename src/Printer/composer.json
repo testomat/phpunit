@@ -1,0 +1,54 @@
+{
+    "name": "testomat/phpunit-printer",
+    "type": "phpunit-printer",
+    "description": ":crystal_ball: PHPUnit printer, assertion and more...",
+    "keywords": [
+        "narrowspark",
+        "testomat",
+        "phpunit",
+        "printer",
+        "error",
+        "exception",
+        "code-coverage"
+    ],
+    "homepage": "http://github.com/testomat/phpunit",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Bannert",
+            "email": "d.bannert@anolilab.de",
+            "homepage": "http://www.anolilab.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.3",
+        "narrowspark/exception-inspector": "^1.0.1",
+        "testomat/phpunit-common": "^1.0.0",
+        "testomat/terminal-colour": "^1.1.0",
+        "phpunit/php-timer": "^2.1.2 || ^3.0.0"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Testomat\\PHPUnit\\Printer\\": ""
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "support": {
+        "issues": "https://github.com/testomat/phpunit/issues",
+        "source": "https://github.com/testomat/phpunit"
+    },
+    "suggest": {
+        "phpunit/phpunit": "Required to use this printer (^8.0.0 || ^9.0.0)."
+    }
+}

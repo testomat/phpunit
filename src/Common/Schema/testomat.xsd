@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="testomat" type="testomatType">
+        <xs:annotation>
+            <xs:documentation>Root Element</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="testomatType">
+        <xs:annotation>
+            <xs:documentation>The main type specifying the document structure</xs:documentation>
+        </xs:annotation>
+        <xs:group ref="testomatConfigGroup"/>
+    </xs:complexType>
+    <xs:group name="testomatConfigGroup">
+        <xs:all>
+            <xs:element minOccurs="0" name="printer" type="printer_type"/>
+            <xs:element minOccurs="0" name="speedtrap" type="speed_trap_type"/>
+            <xs:element minOccurs="0" name="over_assertive" type="over_assertive_type"/>
+        </xs:all>
+    </xs:group>
+    <xs:complexType name="printer_type">
+        <xs:sequence>
+            <xs:element name="exclude">
+                <xs:complexType>
+                    <xs:group ref="pathGroup"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute default="compact" name="type" type="printer_type_type"/>
+        <xs:attribute default="false" name="utf8" type="boolean_type"/>
+        <xs:attribute default="end" name="show_error_on" type="printer_error_type"/>
+    </xs:complexType>
+
+    <xs:simpleType name="printer_type_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="compact" />
+            <xs:enumeration value="expanded" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="boolean_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true" />
+            <xs:enumeration value="false" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="printer_error_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="test" />
+            <xs:enumeration value="end" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:group name="pathGroup">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="directory" type="xs:string"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="speed_trap_type">
+        <xs:sequence minOccurs="0">
+            <xs:element name="slow_threshold" type="xs:integer"/>
+            <xs:element name="report_length" type="xs:integer"/>
+        </xs:sequence>
+        <xs:attribute default="true" name="enabled" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="over_assertive_type">
+        <xs:sequence minOccurs="0">
+            <xs:element name="threshold" type="xs:integer"/>
+            <xs:element name="report_length" type="xs:integer"/>
+        </xs:sequence>
+        <xs:attribute default="true" name="enabled" type="xs:boolean"/>
+    </xs:complexType>
+</xs:schema>
