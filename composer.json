@@ -1,11 +1,17 @@
 {
-    "name": "narrowspark/php-library-template",
+    "name": "testomat/phpunit",
     "type": "library",
-    "description": "Provides a GitHub repository template for a Narrowspark PHP library, using GitHub actions.",
+    "description": ":crystal_ball: PHPUnit printer, assertion and more...",
     "keywords": [
-        "narrowspark"
+        "narrowspark",
+        "testomat",
+        "phpunit",
+        "printer",
+        "error",
+        "exception",
+        "code-coverage"
     ],
-    "homepage": "http://github.com/narrowspark/php-library-template",
+    "homepage": "http://github.com/testomat/phpunit",
     "license": "MIT",
     "authors": [
         {
@@ -16,12 +22,14 @@
         }
     ],
     "require": {
-        "php": "^7.4"
+        "php": "^7.3",
+        "alecrabbit/php-console-colour": "^0.10.0",
+        "phpunit/php-timer": "^2.1.2 || ^3.0.0",
+        "phpunit/phpunit": "^8.0.0 || ^9.0.0"
     },
     "require-dev": {
         "ext-json": "*",
-        "phpunit/phpunit": "^9.0.1",
-        "johnkary/phpunit-speedtrap": "^3.2.0"
+        "symplify/monorepo-builder": "^7.2"
     },
     "config": {
         "preferred-install": "dist",
@@ -33,13 +41,13 @@
         },
         "prefetcher": {
             "require": {
-                "phpunit/phpunit": "^8.0"
+                "phpunit/phpunit": "^8.0.0 || ^9.0.0"
             }
         }
     },
     "autoload": {
         "psr-4": {
-            "Narrowspark\\Library\\": "src/"
+            "Testomat\\PHPUnit\\": "src/"
         },
         "exclude-from-classmap": [
             "/tests/"
@@ -47,7 +55,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Narrowspark\\Library\\Tests\\": "tests/"
+            "Testomat\\PHPUnit\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",
@@ -69,7 +77,7 @@
         "post-update-cmd": "composer --working-dir=./.build update --lock"
     },
     "support": {
-        "issues": "https://github.com/narrowspark/php-library-template/issues",
-        "source": "https://github.com/narrowspark/php-library-template"
+        "issues": "https://github.com/testomat/phpunit/issues",
+        "source": "https://github.com/testomat/phpunit"
     }
 }
