@@ -25,6 +25,7 @@
     stopOnFailure="false"
     stopOnIncomplete="false"
     stopOnSkipped="false"
+    printerClass="Testomat\PHPUnit\ResultPrinter\Printer">
 >
     <php>
         <ini name="error_reporting" value="-1" />

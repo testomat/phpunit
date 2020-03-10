@@ -3,13 +3,14 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "php": "^7.3",
         "narrowspark/coding-standard": "^4.0.0",
         "wikimedia/composer-merge-plugin": "^1.4.1"
     },
     "extra": {
         "prefetcher": {
             "require": {
-                "phpunit/phpunit": "^8.0",
+                "phpunit/phpunit": "^8.0.0 || ^9.0.0",
                 "friendsofphp/php-cs-fixer": "^2.16.0"
             }
         },
