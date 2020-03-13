@@ -396,16 +396,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "472c917b2a083ec7d2fa25c55fd099d1300e2515"
+                "reference": "b912a45da3e2b22f5cb5a23e441b697a295ba011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/472c917b2a083ec7d2fa25c55fd099d1300e2515",
-                "reference": "472c917b2a083ec7d2fa25c55fd099d1300e2515",
+                "url": "https://api.github.com/repos/composer/composer/zipball/b912a45da3e2b22f5cb5a23e441b697a295ba011",
+                "reference": "b912a45da3e2b22f5cb5a23e441b697a295ba011",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-03-10T13:08:05+00:00"
+            "time": "2020-03-13T19:34:27+00:00"
         },
         {
             "name": "composer/semver",
@@ -3862,12 +3862,12 @@
             "version": "0.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/psalm/mockery-psalm-plugin.git",
+                "url": "https://github.com/psalm/psalm-plugin-mockery.git",
                 "reference": "2f00f8a9e632f853613d138074200a5c46345294"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/mockery-psalm-plugin/zipball/2f00f8a9e632f853613d138074200a5c46345294",
+                "url": "https://api.github.com/repos/psalm/psalm-plugin-mockery/zipball/2f00f8a9e632f853613d138074200a5c46345294",
                 "reference": "2f00f8a9e632f853613d138074200a5c46345294",
                 "shasum": ""
             },
@@ -3913,12 +3913,12 @@
             "version": "0.9.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/psalm/phpunit-psalm-plugin.git",
+                "url": "https://github.com/psalm/psalm-plugin-phpunit.git",
                 "reference": "496c08f088d9e34e1947bca1de52b32b6571bad3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phpunit-psalm-plugin/zipball/496c08f088d9e34e1947bca1de52b32b6571bad3",
+                "url": "https://api.github.com/repos/psalm/psalm-plugin-phpunit/zipball/496c08f088d9e34e1947bca1de52b32b6571bad3",
                 "reference": "496c08f088d9e34e1947bca1de52b32b6571bad3",
                 "shasum": ""
             },
@@ -6440,12 +6440,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/auto-bind-parameter.git",
-                "reference": "a5be68ec99403f9fcb7a3e2eacd8fd732f781574"
+                "reference": "9ed8b45ba7ee0821d636edf055d3451ea7b2093a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/auto-bind-parameter/zipball/a5be68ec99403f9fcb7a3e2eacd8fd732f781574",
-                "reference": "a5be68ec99403f9fcb7a3e2eacd8fd732f781574",
+                "url": "https://api.github.com/repos/symplify/auto-bind-parameter/zipball/9ed8b45ba7ee0821d636edf055d3451ea7b2093a",
+                "reference": "9ed8b45ba7ee0821d636edf055d3451ea7b2093a",
                 "shasum": ""
             },
             "require": {
@@ -6482,12 +6482,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/autowire-array-parameter.git",
-                "reference": "e9d728d0b46e27442f01b371bb3989084e4604f9"
+                "reference": "cda89b095061fed9006e19e0178916608ee6074d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/autowire-array-parameter/zipball/e9d728d0b46e27442f01b371bb3989084e4604f9",
-                "reference": "e9d728d0b46e27442f01b371bb3989084e4604f9",
+                "url": "https://api.github.com/repos/symplify/autowire-array-parameter/zipball/cda89b095061fed9006e19e0178916608ee6074d",
+                "reference": "cda89b095061fed9006e19e0178916608ee6074d",
                 "shasum": ""
             },
             "require": {
@@ -6524,12 +6524,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/monorepo-builder.git",
-                "reference": "11c4acfed97541acf19958d47875604bb197cc62"
+                "reference": "bf72032d24e24034df67750432ae46bd2c37d650"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/monorepo-builder/zipball/11c4acfed97541acf19958d47875604bb197cc62",
-                "reference": "11c4acfed97541acf19958d47875604bb197cc62",
+                "url": "https://api.github.com/repos/symplify/monorepo-builder/zipball/bf72032d24e24034df67750432ae46bd2c37d650",
+                "reference": "bf72032d24e24034df67750432ae46bd2c37d650",
                 "shasum": ""
             },
             "require": {
@@ -6582,12 +6582,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/package-builder.git",
-                "reference": "5f72b6735d1b82c771856807752088ec81ae7584"
+                "reference": "f10094ec35eef1300c77df7d32dca71bd99d7a7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/package-builder/zipball/5f72b6735d1b82c771856807752088ec81ae7584",
-                "reference": "5f72b6735d1b82c771856807752088ec81ae7584",
+                "url": "https://api.github.com/repos/symplify/package-builder/zipball/f10094ec35eef1300c77df7d32dca71bd99d7a7d",
+                "reference": "f10094ec35eef1300c77df7d32dca71bd99d7a7d",
                 "shasum": ""
             },
             "require": {
@@ -6628,12 +6628,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/set-config-resolver.git",
-                "reference": "3a34bb51870e2a6213bcc26702450ee7b58855d9"
+                "reference": "81661e3d622f7f969c0ef1e63a29eef2804729db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/set-config-resolver/zipball/3a34bb51870e2a6213bcc26702450ee7b58855d9",
-                "reference": "3a34bb51870e2a6213bcc26702450ee7b58855d9",
+                "url": "https://api.github.com/repos/symplify/set-config-resolver/zipball/81661e3d622f7f969c0ef1e63a29eef2804729db",
+                "reference": "81661e3d622f7f969c0ef1e63a29eef2804729db",
                 "shasum": ""
             },
             "require": {
@@ -6671,12 +6671,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/smart-file-system.git",
-                "reference": "a871319d4b27dddc3ec9d6ee4e837aa518dbe2cd"
+                "reference": "ee3ccca578a0a06b2a2281583112835147438c24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/smart-file-system/zipball/a871319d4b27dddc3ec9d6ee4e837aa518dbe2cd",
-                "reference": "a871319d4b27dddc3ec9d6ee4e837aa518dbe2cd",
+                "url": "https://api.github.com/repos/symplify/smart-file-system/zipball/ee3ccca578a0a06b2a2281583112835147438c24",
+                "reference": "ee3ccca578a0a06b2a2281583112835147438c24",
                 "shasum": ""
             },
             "require": {
