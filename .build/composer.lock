@@ -6436,16 +6436,16 @@
         },
         {
             "name": "symplify/auto-bind-parameter",
-            "version": "v7.2.4",
+            "version": "v7.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/auto-bind-parameter.git",
-                "reference": "50183f0e56196b818de7454b414db69b5623f495"
+                "reference": "020c1ada7275e26d2ab0d9c5c49ed9baa71f7a0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/auto-bind-parameter/zipball/50183f0e56196b818de7454b414db69b5623f495",
-                "reference": "50183f0e56196b818de7454b414db69b5623f495",
+                "url": "https://api.github.com/repos/symplify/auto-bind-parameter/zipball/020c1ada7275e26d2ab0d9c5c49ed9baa71f7a0d",
+                "reference": "020c1ada7275e26d2ab0d9c5c49ed9baa71f7a0d",
                 "shasum": ""
             },
             "require": {
@@ -6453,7 +6453,7 @@
                 "php": "^7.2",
                 "symfony/dependency-injection": "^4.4|^5.0",
                 "symfony/http-kernel": "^4.4|^5.0",
-                "symplify/package-builder": "^7.2.4"
+                "symplify/package-builder": "^7.2.6"
             },
             "require-dev": {
                 "phpunit/phpunit": "^8.5|^9.0"
@@ -6474,7 +6474,7 @@
                 "MIT"
             ],
             "description": "Auto bind parameters for your Symfony applications",
-            "time": "2020-03-12T09:43:53+00:00"
+            "time": "2020-03-18T09:11:00+00:00"
         },
         {
             "name": "symplify/autowire-array-parameter",
