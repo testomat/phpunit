@@ -6667,16 +6667,16 @@
         },
         {
             "name": "symplify/smart-file-system",
-            "version": "v7.2.6",
+            "version": "v7.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/smart-file-system.git",
-                "reference": "6672a37b307baf4911ed5dedabb3db29cb95d3e4"
+                "reference": "8700182eba87e1c59e7d854c5457bf0a20fb81c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/smart-file-system/zipball/6672a37b307baf4911ed5dedabb3db29cb95d3e4",
-                "reference": "6672a37b307baf4911ed5dedabb3db29cb95d3e4",
+                "url": "https://api.github.com/repos/symplify/smart-file-system/zipball/8700182eba87e1c59e7d854c5457bf0a20fb81c9",
+                "reference": "8700182eba87e1c59e7d854c5457bf0a20fb81c9",
                 "shasum": ""
             },
             "require": {
@@ -6706,7 +6706,7 @@
                 "MIT"
             ],
             "description": "Sanitized FileInfo with safe getRealPath() and other handy methods",
-            "time": "2020-03-02T16:35:33+00:00"
+            "time": "2020-03-18T23:14:48+00:00"
         },
         {
             "name": "thecodingmachine/phpstan-strict-rules",
