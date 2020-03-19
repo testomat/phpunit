@@ -6624,16 +6624,16 @@
         },
         {
             "name": "symplify/set-config-resolver",
-            "version": "v7.2.6",
+            "version": "v7.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/set-config-resolver.git",
-                "reference": "790483c5c1dde77c310117394b0ffd297c9e3876"
+                "reference": "a051a20b90fdb70ac3b6744ecaef5a71de658a8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/set-config-resolver/zipball/790483c5c1dde77c310117394b0ffd297c9e3876",
-                "reference": "790483c5c1dde77c310117394b0ffd297c9e3876",
+                "url": "https://api.github.com/repos/symplify/set-config-resolver/zipball/a051a20b90fdb70ac3b6744ecaef5a71de658a8b",
+                "reference": "a051a20b90fdb70ac3b6744ecaef5a71de658a8b",
                 "shasum": ""
             },
             "require": {
@@ -6642,7 +6642,7 @@
                 "symfony/console": "^4.4|^5.0",
                 "symfony/filesystem": "^4.4|^5.0",
                 "symfony/finder": "^4.4|^5.0",
-                "symplify/smart-file-system": "^7.2.6"
+                "symplify/smart-file-system": "^7.2.8"
             },
             "require-dev": {
                 "phpunit/phpunit": "^8.5|^9.0"
@@ -6663,20 +6663,20 @@
                 "MIT"
             ],
             "description": "Resolve config and sets from configs and cli opptions for CLI applications",
-            "time": "2020-03-18T09:11:00+00:00"
+            "time": "2020-03-18T23:25:54+00:00"
         },
         {
             "name": "symplify/smart-file-system",
-            "version": "v7.2.6",
+            "version": "v7.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/smart-file-system.git",
-                "reference": "6672a37b307baf4911ed5dedabb3db29cb95d3e4"
+                "reference": "8700182eba87e1c59e7d854c5457bf0a20fb81c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/smart-file-system/zipball/6672a37b307baf4911ed5dedabb3db29cb95d3e4",
-                "reference": "6672a37b307baf4911ed5dedabb3db29cb95d3e4",
+                "url": "https://api.github.com/repos/symplify/smart-file-system/zipball/8700182eba87e1c59e7d854c5457bf0a20fb81c9",
+                "reference": "8700182eba87e1c59e7d854c5457bf0a20fb81c9",
                 "shasum": ""
             },
             "require": {
@@ -6706,7 +6706,7 @@
                 "MIT"
             ],
             "description": "Sanitized FileInfo with safe getRealPath() and other handy methods",
-            "time": "2020-03-02T16:35:33+00:00"
+            "time": "2020-03-18T23:14:48+00:00"
         },
         {
             "name": "thecodingmachine/phpstan-strict-rules",
