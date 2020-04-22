@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestSuite;
 use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 use Testomat\PHPUnit\Printer\State;
-use Testomat\PHPUnit\Printer\TestResult\Content;
+use Testomat\PHPUnit\Printer\TestResult;
 
 final class Compact extends AbstractStyle
 {
@@ -75,6 +75,6 @@ final class Compact extends AbstractStyle
      */
     private function testLineFrom(int $theme, string $icon): string
     {
-        return $this->colour->format(\Safe\sprintf('<%s>%s</> ', Content::MAPPER[$theme], $icon));
+        return $this->colour->format(\Safe\sprintf('<%s>%s</> ', TestResult::MAPPER[$theme], $icon));
     }
 }

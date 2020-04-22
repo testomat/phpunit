@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @see https://github.com/testomat/phpunit
  */
 
-namespace Testomat\PHPUnit\Printer\TestResult;
+namespace Testomat\PHPUnit\Printer;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\BaseTestRunner;
@@ -20,7 +20,7 @@ use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 /**
  * @internal
  */
-final class Content implements TestResultContract
+final class TestResult implements TestResultContract
 {
     /**
      * @readonly

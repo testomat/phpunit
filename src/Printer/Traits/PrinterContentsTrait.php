@@ -32,7 +32,7 @@ use Testomat\PHPUnit\Common\Util;
 use Testomat\PHPUnit\Printer\State;
 use Testomat\PHPUnit\Printer\Style\Compact;
 use Testomat\PHPUnit\Printer\Style\Expanded;
-use Testomat\PHPUnit\Printer\TestResult\Content;
+use Testomat\PHPUnit\Printer\TestResult as TestomatTestResult;
 use Testomat\TerminalColour\Util as TerminalColourUtil;
 use Throwable;
 
@@ -140,7 +140,7 @@ trait PrinterContentsTrait
         $testCase = $this->testCaseFromTest($testCase);
 
         $this->state->add(
-            Content::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_FAILURE, $time)
+            TestomatTestResult::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_FAILURE, $time)
                 ->setFailureContent($this->style->renderError($throwable))
         );
 
@@ -155,7 +155,7 @@ trait PrinterContentsTrait
         $testCase = $this->testCaseFromTest($testCase);
 
         $this->state->add(
-            Content::fromTestCase(
+            TestomatTestResult::fromTestCase(
                 $this->state->testCaseName,
                 $testCase,
                 BaseTestRunner::STATUS_WARNING,
@@ -175,7 +175,7 @@ trait PrinterContentsTrait
         $testCase = $this->testCaseFromTest($testCase);
 
         $this->state->add(
-            Content::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_FAILURE, $time)
+            TestomatTestResult::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_FAILURE, $time)
                 ->setFailureContent($this->style->renderFailure($error))
         );
 
@@ -190,7 +190,7 @@ trait PrinterContentsTrait
         $testCase = $this->testCaseFromTest($testCase);
 
         $this->state->add(
-            Content::fromTestCase(
+            TestomatTestResult::fromTestCase(
                 $this->state->testCaseName,
                 $testCase,
                 BaseTestRunner::STATUS_INCOMPLETE,
@@ -210,7 +210,7 @@ trait PrinterContentsTrait
         $testCase = $this->testCaseFromTest($testCase);
 
         $this->state->add(
-            Content::fromTestCase(
+            TestomatTestResult::fromTestCase(
                 $this->state->testCaseName,
                 $testCase,
                 BaseTestRunner::STATUS_RISKY,
@@ -230,7 +230,7 @@ trait PrinterContentsTrait
         $testCase = $this->testCaseFromTest($testCase);
 
         $this->state->add(
-            Content::fromTestCase(
+            TestomatTestResult::fromTestCase(
                 $this->state->testCaseName,
                 $testCase,
                 BaseTestRunner::STATUS_SKIPPED,
@@ -308,7 +308,7 @@ trait PrinterContentsTrait
             }
 
             $this->state->add(
-                Content::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_PASSED, $time)
+                TestomatTestResult::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_PASSED, $time)
                     ->setNumAssertions($numAssertions)
                     ->setSpeedTrap($isSlow, $speedTrapThreshold)
                     ->setOverAssertive($isOverAssertive, $overAssertiveThreshold)

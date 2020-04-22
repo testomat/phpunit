@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\BaseTestRunner;
 use Testomat\PHPUnit\Common\Contract\PHPUnit\PrettyTestCaseName as PrettyTestCaseNameContract;
 use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
-use Testomat\PHPUnit\Printer\TestResult\Content;
+use Testomat\PHPUnit\Printer\TestResult;
 
 /**
  * @internal
@@ -187,7 +187,7 @@ final class State
     public function existsInTestCase(TestCase $test): bool
     {
         foreach ($this->testCaseTests as $testResult) {
-            if (Content::makeDescription($test) === $testResult->description) {
+            if (TestResult::makeDescription($test) === $testResult->description) {
                 return true;
             }
         }

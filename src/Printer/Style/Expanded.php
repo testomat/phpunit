@@ -19,7 +19,7 @@ use PHPUnit\Runner\BaseTestRunner;
 use Testomat\PHPUnit\Common\Util;
 use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 use Testomat\PHPUnit\Printer\State;
-use Testomat\PHPUnit\Printer\TestResult\Content;
+use Testomat\PHPUnit\Printer\TestResult;
 
 final class Expanded extends AbstractStyle
 {
@@ -108,12 +108,12 @@ final class Expanded extends AbstractStyle
 
         if ($testCase) {
             $runs[] = \PHP_EOL . $this->titleLineFrom(
-                Content::RUNS,
+                TestResult::RUNS,
                 'RUNS',
                 \get_class($testCase)
             );
 
-            $testResult = Content::fromTestCase($state->testCaseName, $testCase, Content::RUNS);
+            $testResult = TestResult::fromTestCase($state->testCaseName, $testCase, TestResult::RUNS);
 
             $runs[] = $this->testLineFrom(
                 $testResult->type,
@@ -160,7 +160,7 @@ final class Expanded extends AbstractStyle
 
         $testCaseName = $this->colour->format(\Safe\sprintf("<fg=default>{$nonHighlightedPart}\\</> <fg=default;effects=bold>%s</>", $highlightedPart));
 
-        return $this->colour->format(\Safe\sprintf('<%s> %s </> %s', Content::MAPPER[$theme], $title, $testCaseName));
+        return $this->colour->format(\Safe\sprintf('<%s> %s </> %s', TestResult::MAPPER[$theme], $title, $testCaseName));
     }
 
     /**
@@ -181,14 +181,14 @@ final class Expanded extends AbstractStyle
             );
         }
 
-        $message = ' ' . $this->colour->format(\Safe\sprintf('<%s>%s </>', Content::MAPPER[$theme], $icon));
+        $message = ' ' . $this->colour->format(\Safe\sprintf('<%s>%s </>', TestResult::MAPPER[$theme], $icon));
 
         if ($time !== null && $this->configuration->isSpeedTrapActive()) {
-            $message .= $this->colour->format(\Safe\sprintf('<%s>%s</>', $isSlow ? Content::MAPPER[BaseTestRunner::STATUS_WARNING] : 'fg=white', Util::getPreparedTimeString($time)));
+            $message .= $this->colour->format(\Safe\sprintf('<%s>%s</>', $isSlow ? TestResult::MAPPER[BaseTestRunner::STATUS_WARNING] : 'fg=white', Util::getPreparedTimeString($time)));
         }
 
         $message .= $this->colour->format(\Safe\sprintf('<fg=default>%s</>', $description));
 
-        return $message . ($warning !== '' ? ' ' . $this->colour->format(\Safe\sprintf('<%s>%s</>', Content::MAPPER[BaseTestRunner::STATUS_WARNING], $warning)) : '');
+        return $message . ($warning !== '' ? ' ' . $this->colour->format(\Safe\sprintf('<%s>%s</>', TestResult::MAPPER[BaseTestRunner::STATUS_WARNING], $warning)) : '');
     }
 }

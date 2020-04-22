@@ -30,10 +30,10 @@ use Testomat\PHPUnit\Common\Terminal\Terminal;
 use Testomat\PHPUnit\Common\Timer;
 use Testomat\PHPUnit\Common\Util;
 use Testomat\PHPUnit\Printer\Contract\Style as StyleContract;
-use Testomat\PHPUnit\Printer\Contract\TestResult;
+use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 use Testomat\PHPUnit\Printer\Exception\Renderer as ExceptionRenderer;
 use Testomat\PHPUnit\Printer\State;
-use Testomat\PHPUnit\Printer\TestResult\Content;
+use Testomat\PHPUnit\Printer\TestResult;
 use Testomat\TerminalColour\Formatter;
 use Testomat\TerminalColour\Style;
 use Throwable;
@@ -58,7 +58,7 @@ abstract class AbstractStyle implements StyleContract
         BaseTestRunner::STATUS_ERROR => ['light_red', null, ['bold']],
         BaseTestRunner::STATUS_RISKY => ['magenta', null, ['bold']],
         BaseTestRunner::STATUS_WARNING => ['yellow', null, ['bold']],
-        Content::RUNS => ['blue', null, ['bold']],
+        TestResult::RUNS => ['blue', null, ['bold']],
     ];
 
     /** @var \Testomat\PHPUnit\Common\Terminal\Terminal */
@@ -119,7 +119,7 @@ abstract class AbstractStyle implements StyleContract
         $styles = [];
 
         foreach (static::STYLES as $name => $style) {
-            $styles[Content::MAPPER[$name]] = new Style(...$style);
+            $styles[TestResult::MAPPER[$name]] = new Style(...$style);
         }
 
         $this->colour = new Formatter($enableColor, $styles, $this->output->getStream());
@@ -277,13 +277,13 @@ abstract class AbstractStyle implements StyleContract
         $this->writeSummary($numAssertions);
 
         if ($this->configuration->isSpeedTrapActive()) {
-            $this->writeSlowTests(array_filter($state->suiteTests, static function (TestResult $testResult) {
+            $this->writeSlowTests(array_filter($state->suiteTests, static function (TestResultContract $testResult) {
                 return $testResult->isSlow;
             }));
         }
 
         if ($this->configuration->isOverAssertiveActive()) {
-            $this->writeOverAssertiveTests(array_filter($state->suiteTests, static function (TestResult $testResult) {
+            $this->writeOverAssertiveTests(array_filter($state->suiteTests, static function (TestResultContract $testResult) {
                 return $testResult->isOverAssertive;
             }));
         }
@@ -294,7 +294,7 @@ abstract class AbstractStyle implements StyleContract
             $showErrors = false;
         }
 
-        $errors = array_filter($state->suiteTests, static function (TestResult $testResult) {
+        $errors = array_filter($state->suiteTests, static function (TestResultContract $testResult) {
             return $testResult->type === BaseTestRunner::STATUS_FAILURE || $testResult->type === BaseTestRunner::STATUS_ERROR;
         });
 
@@ -302,7 +302,7 @@ abstract class AbstractStyle implements StyleContract
 
         if ($showErrors && $countErrors !== 0) {
             $this->output->writeln($this->colour->format(
-                \PHP_EOL . sprintf('<%s>Recorded %s error%s:</>', Content::MAPPER[BaseTestRunner::STATUS_FAILURE], $countErrors, $countErrors === 1 ? '' : 's', ) . \PHP_EOL
+                \PHP_EOL . sprintf('<%s>Recorded %s error%s:</>', TestResult::MAPPER[BaseTestRunner::STATUS_FAILURE], $countErrors, $countErrors === 1 ? '' : 's', ) . \PHP_EOL
             ));
 
             foreach ($errors as $error) {
@@ -375,14 +375,14 @@ abstract class AbstractStyle implements StyleContract
 
         foreach (self::TYPES as $type) {
             if ($countTests = $state->countTestsInTestSuiteBy($type)) {
-                $tests[] = $this->colour->format(\Safe\sprintf('<%s>%s : %s</>', Content::MAPPER[$type], $countTests, Content::MAPPER[$type]));
+                $tests[] = $this->colour->format(\Safe\sprintf('<%s>%s : %s</>', TestResult::MAPPER[$type], $countTests, TestResult::MAPPER[$type]));
             }
         }
 
         $pending = $state->suiteTotalTests - $state->testSuiteTestsCount();
 
         if ($pending) {
-            $tests[] = $this->colour->format(\Safe\sprintf('<%s>%s : pending</>', Content::MAPPER[Content::RUNS], $pending));
+            $tests[] = $this->colour->format(\Safe\sprintf('<%s>%s : pending</>', TestResult::MAPPER[TestResult::RUNS], $pending));
         }
 
         return $tests;
