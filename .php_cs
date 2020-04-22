@@ -23,7 +23,8 @@ $config = new Config($license->header(), [
         'import_classes' => true,
         'import_constants' => false,
         'import_functions' => false,
-    ]
+    ],
+    'final_public_method_for_abstract_class' => false
 ]);
 
 $config->getFinder()

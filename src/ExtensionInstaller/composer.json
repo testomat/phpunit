@@ -1,0 +1,46 @@
+{
+    "name": "testomat/phpunit-extension-installer",
+    "type": "composer-plugin",
+    "description": ":crystal_ball: Find and report on slow tests in your PHPUnit test suite",
+    "keywords": [
+        "narrowspark",
+        "testomat",
+        "phpunit",
+        "hook",
+        "speedtrap"
+    ],
+    "homepage": "http://github.com/testomat/phpunit",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Bannert",
+            "email": "d.bannert@anolilab.de",
+            "homepage": "http://www.anolilab.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.3",
+        "composer-plugin-api": "^1.0 || ^2.0"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Testomat\\PHPUnit\\SpeedTrap\\": ""
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "support": {
+        "issues": "https://github.com/testomat/phpunit/issues",
+        "source": "https://github.com/testomat/phpunit"
+    }
+}

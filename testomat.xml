@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testomat
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="src/Common/Schema/testomat.xsd"
+>
+    <printer type="compact" show_error_on="end">
+        <exclude>
+            <directory>vendor/phpunit/phpunit/src</directory>
+            <directory>vendor/mockery/mockery</directory>
+        </exclude>
+    </printer>
+
+    <speedtrap enabled="true">
+        <slow_threshold>500</slow_threshold>
+        <report_length>10</report_length>
+    </speedtrap>
+</testomat>

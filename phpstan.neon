@@ -15,5 +15,6 @@ parameters:
     tmpDir: %currentWorkingDirectory%/phpstan
 
     excludes_analyse:
+        - src/ResultPrinter/Printer.php
 
     ignoreErrors:

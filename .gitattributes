@@ -2,9 +2,10 @@
 *.php text eol=lf
 
 .build/                export-ignore
-.dependabot            export-ignore
-.docker                export-ignore
+.dependabot/           export-ignore
+.docker/               export-ignore
 .github/               export-ignore
+bin/                   export-ignore
 
 tests/                 export-ignore
 
@@ -16,6 +17,7 @@ tests/                 export-ignore
 .php_cs                export-ignore
 .textlintrc            export-ignore
 .travis.yml            export-ignore
+.typo-ci.yml           export-ignore
 docker-compose.yml     export-ignore
 infection.json         export-ignore
 package.json           export-ignore
