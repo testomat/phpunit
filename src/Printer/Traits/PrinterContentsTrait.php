@@ -50,7 +50,7 @@ trait PrinterContentsTrait
     protected $slow = [];
 
     /** @var string */
-    private $colors;
+    private $phpunitColors;
 
     /** @var int */
     private $numberOfColumns;
@@ -99,7 +99,7 @@ trait PrinterContentsTrait
     ) {
         $this->validateVariables($colors, $numberOfColumns);
 
-        $this->colors = $colors;
+        $this->phpunitColors = $colors;
 
         if ((int) (substr(Version::id(), 0, 1)) === 8) {
             parent::__construct($out, $verbose, $this->colors, $debug, $numberOfColumns, $reverse);
@@ -113,9 +113,9 @@ trait PrinterContentsTrait
         $this->output = new Terminal();
 
         if ($this->configuration->getType() === Configuration::TYPE_COMPACT) {
-            $this->style = new Compact($this->output, $this->colors, $this->numberOfColumns, $verbose, $this->configuration, $this->phpunitConfiguration);
+            $this->style = new Compact($this->output, $this->phpunitColors, $this->numberOfColumns, $verbose, $this->configuration, $this->phpunitConfiguration);
         } else {
-            $this->style = new Expanded($this->output, $colors, $this->numberOfColumns, $verbose, $this->configuration, $this->phpunitConfiguration);
+            $this->style = new Expanded($this->output, $this->phpunitColors, $this->numberOfColumns, $verbose, $this->configuration, $this->phpunitConfiguration);
         }
 
         $this->state = State::from(new /**
@@ -329,7 +329,7 @@ trait PrinterContentsTrait
     public function printResult(TestResult $result): void
     {
         if ($result->getCollectCodeCoverageInformation()) {
-            $coveragePrinter = new Text($this->output, $this->colors, $this->numberOfColumns);
+            $coveragePrinter = new Text($this->output, $this->phpunitColors, $this->numberOfColumns);
 
             $arguments = Util::getPHPUnitTestRunnerArguments();
             $codeCoverageConfiguration = $this->phpunitConfiguration->getCodeCoverage();
