@@ -1,13 +1,14 @@
 {
     "name": "testomat/phpunit-common",
-    "type": "phpunit-printer",
+    "type": "library",
     "description": ":crystal_ball: Find and report on slow tests in your PHPUnit test suite",
     "keywords": [
         "narrowspark",
         "testomat",
         "phpunit",
         "hook",
-        "speedtrap"
+        "common",
+        "configuration"
     ],
     "homepage": "http://github.com/testomat/phpunit",
     "license": "MIT",
@@ -37,7 +38,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Testomat\\PHPUnit\\SpeedTrap\\": ""
+            "Testomat\\PHPUnit\\Common\\": ""
         }
     },
     "minimum-stability": "dev",
