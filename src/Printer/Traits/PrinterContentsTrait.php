@@ -102,7 +102,7 @@ trait PrinterContentsTrait
         $this->phpunitColors = $colors;
 
         if ((int) (substr(Version::id(), 0, 1)) === 8) {
-            parent::__construct($out, $verbose, $this->colors, $debug, $numberOfColumns, $reverse);
+            parent::__construct($out, $verbose, $this->phpunitColors, $debug, $numberOfColumns, $reverse);
         }
 
         $this->numberOfColumns = $this->getNumberOfColumns($numberOfColumns);
