@@ -18,8 +18,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
+ * @covers \Testomat\PHPUnit\Common\Configuration\Configuration
+ *
  * @small
- * @coversNothing
  */
 final class ConfigurationTest extends TestCase
 {

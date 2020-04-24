@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\BaseTestRunner;
 use Testomat\PHPUnit\Common\Contract\PHPUnit\PrettyTestCaseName as PrettyTestCaseNameContract;
 use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
-use Testomat\PHPUnit\Printer\TestResult;
 
 /**
  * @internal

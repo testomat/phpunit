@@ -30,6 +30,7 @@ use Testomat\PHPUnit\Common\Contract\Exception\ShouldNotHappenException;
 use Testomat\PHPUnit\Common\Terminal\Terminal;
 use Testomat\PHPUnit\Common\Util;
 use Testomat\PHPUnit\Printer\State;
+use Testomat\PHPUnit\Printer\Style\CodeCoverage\Text;
 use Testomat\PHPUnit\Printer\Style\Compact;
 use Testomat\PHPUnit\Printer\Style\Expanded;
 use Testomat\PHPUnit\Printer\TestResult as TestomatTestResult;
@@ -42,26 +43,22 @@ trait PrinterContentsTrait
     protected $numAssertions = 0;
 
     /**
-     * Collection of over assertive tests.
-     *
-     * @var array<int, string>
-     */
-    protected $assertive = [];
-
-    /**
      * Collection of slow tests.
      *
      * @var array<int, string>
      */
     protected $slow = [];
 
-    /**
-     * Holds an instance of the style.
-     *
-     * Expanded is a class we use to interact with output.
-     *
-     * @var \Testomat\PHPUnit\Printer\Contract\Style
-     */
+    /** @var string */
+    private $colors;
+
+    /** @var int */
+    private $numberOfColumns;
+
+    /** @var \Testomat\PHPUnit\Common\Terminal\Terminal */
+    private $output;
+
+    /** @var \Testomat\PHPUnit\Printer\Contract\Style */
     private $style;
 
     /**
@@ -79,12 +76,16 @@ trait PrinterContentsTrait
      */
     private $ended = false;
 
-    /** @var Configuration */
+    /** @var bool */
+    private $hasErrors = false;
+
+    /** @var \Testomat\PHPUnit\Common\Configuration\PHPUnitConfiguration */
+    private $phpunitConfiguration;
+
+    /** @var \Testomat\PHPUnit\Common\Configuration\Configuration */
     private $configuration;
 
     /**
-     * Creates a new instance of the listener.
-     *
      * @param null|resource|string $out
      * @param int|string           $numberOfColumns
      */
@@ -98,25 +99,23 @@ trait PrinterContentsTrait
     ) {
         $this->validateVariables($colors, $numberOfColumns);
 
+        $this->colors = $colors;
+
         if ((int) (substr(Version::id(), 0, 1)) === 8) {
-            parent::__construct($out, $verbose, $colors, $debug, $numberOfColumns, $reverse);
+            parent::__construct($out, $verbose, $this->colors, $debug, $numberOfColumns, $reverse);
         }
 
-        $phpunitConfiguration = new PHPUnitConfiguration(Util::getPHPUnitConfiguration());
+        $this->numberOfColumns = $this->getNumberOfColumns($numberOfColumns);
+
+        $this->phpunitConfiguration = new PHPUnitConfiguration(Util::getPHPUnitConfiguration());
         $this->configuration = Util::getTestomatConfiguration();
 
-        $output = new Terminal();
-
-        $maxNumberOfColumns = TerminalColourUtil::getNumberOfColumns();
-
-        if ($numberOfColumns === 'max' || ($numberOfColumns !== 80 && $numberOfColumns > $maxNumberOfColumns)) {
-            $numberOfColumns = $maxNumberOfColumns;
-        }
+        $this->output = new Terminal();
 
         if ($this->configuration->getType() === Configuration::TYPE_COMPACT) {
-            $this->style = new Compact($output, $colors, $numberOfColumns, $verbose, $this->configuration, $phpunitConfiguration);
+            $this->style = new Compact($this->output, $this->colors, $this->numberOfColumns, $verbose, $this->configuration, $this->phpunitConfiguration);
         } else {
-            $this->style = new Expanded($output, $colors, $numberOfColumns, $verbose, $this->configuration, $phpunitConfiguration);
+            $this->style = new Expanded($this->output, $colors, $this->numberOfColumns, $verbose, $this->configuration, $this->phpunitConfiguration);
         }
 
         $this->state = State::from(new /**
@@ -143,6 +142,8 @@ trait PrinterContentsTrait
             TestomatTestResult::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_FAILURE, $time)
                 ->setFailureContent($this->style->renderError($throwable))
         );
+
+        $this->hasErrors = true;
 
         $this->style->addError($this->state, $testCase, $throwable, $time);
     }
@@ -178,6 +179,8 @@ trait PrinterContentsTrait
             TestomatTestResult::fromTestCase($this->state->testCaseName, $testCase, BaseTestRunner::STATUS_FAILURE, $time)
                 ->setFailureContent($this->style->renderFailure($error))
         );
+
+        $this->hasErrors = true;
 
         $this->style->addFailure($this->state, $testCase, $error, $time);
     }
@@ -285,14 +288,10 @@ trait PrinterContentsTrait
 
         if (! $this->state->existsInTestCase($testCase)) {
             $isSlow = false;
-            $speedTrapThreshold = 0;
+            $speedTrapThreshold = $this->getSlowThreshold($testCase);
 
-            if ($this->configuration->isSpeedTrapActive()) {
-                $speedTrapThreshold = $this->getSlowThreshold($testCase);
-
-                if ((int) round($time * 1000) >= $speedTrapThreshold) {
-                    $isSlow = true;
-                }
+            if ((int) round($time * 1000) >= $speedTrapThreshold) {
+                $isSlow = true;
             }
 
             $isOverAssertive = false;
@@ -329,7 +328,44 @@ trait PrinterContentsTrait
      */
     public function printResult(TestResult $result): void
     {
+        if ($result->getCollectCodeCoverageInformation()) {
+            $coveragePrinter = new Text($this->output, $this->colors, $this->numberOfColumns);
+
+            $arguments = Util::getPHPUnitTestRunnerArguments();
+            $codeCoverageConfiguration = $this->phpunitConfiguration->getCodeCoverage();
+
+            if ($this->hasErrors) {
+                $codeCoverageConfiguration->setShowOnlySummary(true);
+            } elseif (! $codeCoverageConfiguration->hasShowOnlySummary()) {
+                $codeCoverageConfiguration->setShowOnlySummary($arguments['coverageTextShowOnlySummary'] ?? false);
+            }
+
+            if (! $codeCoverageConfiguration->hasShowUncoveredFiles()) {
+                $codeCoverageConfiguration->setShowUncoveredFiles($arguments['coverageTextShowUncoveredFiles'] ?? true);
+            }
+
+            $coveragePrinter->setHighLowerBound($codeCoverageConfiguration->getHighLowerBound());
+            $coveragePrinter->setLowUpperBound($codeCoverageConfiguration->getLowUpperBound());
+            $coveragePrinter->setShowOnlySummary($codeCoverageConfiguration->isShowOnlySummary());
+            $coveragePrinter->setShowUncoveredFiles($codeCoverageConfiguration->isShowUncoveredFiles());
+
+            $coveragePrinter->process($result->getCodeCoverage());
+
+            return;
+        }
+
         $this->style->writeEmptyTestMessage($this->state);
+    }
+
+    private function getNumberOfColumns($numberOfColumns): int
+    {
+        $maxNumberOfColumns = TerminalColourUtil::getNumberOfColumns();
+
+        if ($numberOfColumns === 'max' || ($numberOfColumns !== 80 && $numberOfColumns > $maxNumberOfColumns)) {
+            $numberOfColumns = $maxNumberOfColumns;
+        }
+
+        return $numberOfColumns;
     }
 
     /**
@@ -406,9 +442,6 @@ trait PrinterContentsTrait
         return $this->configuration->getSpeedTrapSlowThreshold();
     }
 
-    /**
-     * @param mixed $numberOfColumns
-     */
     private function validateVariables(string $colors, $numberOfColumns): void
     {
         if (! \in_array($colors, $availableColors = ['never', 'auto', 'always'], true)) {

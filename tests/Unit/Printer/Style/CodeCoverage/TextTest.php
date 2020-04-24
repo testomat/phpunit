@@ -11,17 +11,18 @@ declare(strict_types=1);
  * @see https://github.com/testomat/phpunit
  */
 
-namespace Testomat\PHPUnit\Tests\Unit\Common\Configuration;
+namespace Testomat\PHPUnit\Tests\Unit\Printer\Style\CodeCoverage;
 
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  *
- * @covers \Testomat\PHPUnit\Common\Configuration\Loader
+ * @covers \Testomat\PHPUnit\Printer\Style\CodeCoverage\Text
  *
  * @small
  */
-final class LoaderTest extends TestCase
+final class TextTest extends TestCase
 {
+
 }

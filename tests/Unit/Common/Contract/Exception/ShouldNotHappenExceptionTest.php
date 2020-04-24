@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @see https://github.com/testomat/phpunit
  */
 
-namespace Testomat\PHPUnit\Tests\Unit\Printer\Exception;
+namespace Testomat\PHPUnit\Tests\Unit\Common\Contract\Exception;
 
 use PHPUnit\Framework\TestCase;
 use Testomat\PHPUnit\Common\Contract\Exception\ShouldNotHappenException;
@@ -19,8 +19,9 @@ use Testomat\PHPUnit\Common\Contract\Exception\ShouldNotHappenException;
 /**
  * @internal
  *
+ * @covers \Testomat\PHPUnit\Common\Contract\Exception\ShouldNotHappenException
+ *
  * @small
- * @coversNothing
  */
 final class ShouldNotHappenExceptionTest extends TestCase
 {

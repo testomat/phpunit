@@ -27,6 +27,7 @@ use Testomat\PHPUnit\Common\Configuration\Configuration;
 use Testomat\PHPUnit\Common\Configuration\PHPUnitConfiguration;
 use Testomat\PHPUnit\Common\Terminal\Highlighter;
 use Testomat\PHPUnit\Common\Terminal\Terminal;
+use Testomat\PHPUnit\Common\Terminal\TerminalSection;
 use Testomat\PHPUnit\Common\Timer;
 use Testomat\PHPUnit\Common\Util;
 use Testomat\PHPUnit\Printer\Contract\Style as StyleContract;
@@ -61,20 +62,23 @@ abstract class AbstractStyle implements StyleContract
         TestResult::RUNS => ['blue', null, ['bold']],
     ];
 
-    /** @var \Testomat\PHPUnit\Common\Terminal\Terminal */
-    protected $output;
+    /** @var \Testomat\PHPUnit\Common\Terminal\TerminalSection */
+    protected $headerSection;
 
     /** @var \Testomat\PHPUnit\Common\Terminal\TerminalSection */
-    protected $footer;
+    protected $contentSection;
+
+    /** @var \Testomat\PHPUnit\Common\Terminal\TerminalSection */
+    protected $footerSection;
+
+    /** @var \Testomat\PHPUnit\Common\Terminal\TerminalSection */
+    protected $errorSection;
 
     /** @var \Testomat\TerminalColour\Contract\WrappableFormatter */
     protected $colour;
 
     /** @var \Testomat\PHPUnit\Printer\Exception\Renderer */
     protected $exceptionRenderer;
-
-    /** @var bool */
-    protected static $firstLine = true;
 
     /** @var \Testomat\PHPUnit\Common\Configuration\Configuration */
     protected $configuration;
@@ -100,18 +104,20 @@ abstract class AbstractStyle implements StyleContract
             $numberOfColumns = 16;
         }
 
-        $this->output = $terminal;
         $this->numberOfColumns = $numberOfColumns;
         $this->verbose = $verbose;
         $this->configuration = $configuration;
         $this->phpunitConfiguration = $phpunitConfiguration;
 
-        $this->footer = $this->output->section();
+        $this->headerSection = $terminal->section();
+        $this->contentSection = $terminal->section();
+        $this->footerSection = $terminal->section();
+        $this->errorSection = $terminal->section();
 
         if ($colors === 'always') {
             $enableColor = true;
         } elseif ($colors === 'auto') {
-            $enableColor = $this->output->hasColorSupport();
+            $enableColor = $terminal->hasColorSupport();
         } else {
             $enableColor = false;
         }
@@ -122,7 +128,7 @@ abstract class AbstractStyle implements StyleContract
             $styles[TestResult::MAPPER[$name]] = new Style(...$style);
         }
 
-        $this->colour = new Formatter($enableColor, $styles, $this->output->getStream());
+        $this->colour = new Formatter($enableColor, $styles, $terminal->getStream());
         $this->exceptionRenderer = new ExceptionRenderer($this->colour, new Highlighter($this->colour, $this->configuration->isUtf8()));
 
         if ($this->configuration->showErrorOn() === Configuration::SHOW_ERROR_ON_TEST && $this->configuration->getType() === Configuration::TYPE_EXPANDED) {
@@ -137,11 +143,14 @@ abstract class AbstractStyle implements StyleContract
      */
     public function addWarning(State $state, TestCase $test, Warning $exception, float $time): void
     {
-        if ($stopOnWarning = $this->phpunitConfiguration->stopOnWarning()) {
+        $stopOnWarning = $this->phpunitConfiguration->stopOnWarning();
+        $stopOnDefect = $this->phpunitConfiguration->stopOnDefect();
+
+        if ($stopOnWarning || $stopOnDefect) {
             $this->writeCurrentRecap($state);
 
-            if ($stopOnWarning) {
-                $this->stop($state, 'You configured PHPUnit to stop on a warning.');
+            if ($stopOnWarning || $stopOnDefect) {
+                $this->stop($state, \Safe\sprintf('You configured PHPUnit to stop on a %s.', $stopOnWarning ? 'warning' : 'defect'));
             }
         }
     }
@@ -165,11 +174,14 @@ abstract class AbstractStyle implements StyleContract
      */
     public function addRiskyTest(State $state, TestCase $test, Throwable $t, float $time): void
     {
-        if ($stopOnRisky = $this->phpunitConfiguration->stopOnRisky()) {
+        $stopOnRisky = $this->phpunitConfiguration->stopOnRisky();
+        $stopOnDefect = $this->phpunitConfiguration->stopOnDefect();
+
+        if ($stopOnRisky || $stopOnDefect) {
             $this->writeCurrentRecap($state);
 
-            if ($stopOnRisky) {
-                $this->stop($state, 'You configured PHPUnit to stop on a risky test.');
+            if ($stopOnRisky || $stopOnDefect) {
+                $this->stop($state, \Safe\sprintf('You configured PHPUnit to stop on a %s.', $stopOnRisky ? 'risky test' : 'defect'));
             }
         }
     }
@@ -223,7 +235,7 @@ abstract class AbstractStyle implements StyleContract
         if ($stopOnError || ($this->configuration->showErrorOn() === Configuration::SHOW_ERROR_ON_TEST && $this->configuration->getType() === Configuration::TYPE_EXPANDED)) {
             $this->writeCurrentRecap($state);
 
-            $this->output->writeln(\PHP_EOL . $state->getLastTestCase()->failureContent);
+            $this->contentSection->writeln(\PHP_EOL . $state->getLastTestCase()->failureContent);
 
             if ($stopOnError) {
                 $this->stop($state, 'You configured PHPUnit to stop on a error.');
@@ -257,14 +269,15 @@ abstract class AbstractStyle implements StyleContract
     public function addFailure(State $state, TestCase $testCase, AssertionFailedError $error, float $time): void
     {
         $stopOnFailure = $this->phpunitConfiguration->stopOnFailure();
+        $stopOnDefect = $this->phpunitConfiguration->stopOnDefect();
 
-        if ($stopOnFailure || ($this->configuration->showErrorOn() === Configuration::SHOW_ERROR_ON_TEST && $this->configuration->getType() === Configuration::TYPE_EXPANDED)) {
+        if ($stopOnFailure || $stopOnDefect || ($this->configuration->showErrorOn() === Configuration::SHOW_ERROR_ON_TEST && $this->configuration->getType() === Configuration::TYPE_EXPANDED)) {
             $this->writeCurrentRecap($state);
 
-            $this->output->writeln(\PHP_EOL . $state->getLastTestCase()->failureContent);
+            $this->contentSection->writeln(\PHP_EOL . $state->getLastTestCase()->failureContent);
 
-            if ($stopOnFailure) {
-                $this->stop($state, 'You configured PHPUnit to stop on a failure.');
+            if ($stopOnFailure || $stopOnDefect) {
+                $this->stop($state, \Safe\sprintf('You configured PHPUnit to stop on a %s.', $stopOnFailure ? 'failure' : 'defect'));
             }
         }
     }
@@ -301,15 +314,15 @@ abstract class AbstractStyle implements StyleContract
         $countErrors = \count($errors);
 
         if ($showErrors && $countErrors !== 0) {
-            $this->output->writeln($this->colour->format(
+            $this->errorSection->writeln($this->colour->format(
                 \PHP_EOL . sprintf('<%s>Recorded %s error%s:</>', TestResult::MAPPER[BaseTestRunner::STATUS_FAILURE], $countErrors, $countErrors === 1 ? '' : 's', ) . \PHP_EOL
             ));
 
             foreach ($errors as $error) {
-                $this->output->writeln($error->failureContent . \PHP_EOL);
+                $this->errorSection->writeln($error->failureContent . \PHP_EOL);
             }
         } else {
-            $this->output->writeln('');
+            $this->errorSection->writeln('');
         }
 
         $this->writeDifferentResultsOnConfigurationValidationErrors();
@@ -328,42 +341,42 @@ abstract class AbstractStyle implements StyleContract
     {
         $runtime = new Runtime();
 
-        $this->output->writeln(Version::getVersionString() . \PHP_EOL);
-        $this->output->writeln($this->colour->format('<effects=bold>Runtime:</>                ' . $runtime->getNameWithVersionAndCodeCoverageDriver()));
-        $this->output->writeln($this->colour->format('<effects=bold>PHPUnit Configuration:</>  ' . $this->phpunitConfiguration->getFilename()));
-        $this->output->writeln($this->colour->format('<effects=bold>Testomat Configuration:</> ' . $this->configuration->getFilename()));
+        $this->headerSection->writeln(Version::getVersionString() . \PHP_EOL);
+        $this->headerSection->writeln($this->colour->format('<effects=bold>Runtime:</>                ' . $runtime->getNameWithVersionAndCodeCoverageDriver()));
+        $this->headerSection->writeln($this->colour->format('<effects=bold>PHPUnit Configuration:</>  ' . $this->phpunitConfiguration->getFilename()));
+        $this->headerSection->writeln($this->colour->format('<effects=bold>Testomat Configuration:</> ' . $this->configuration->getFilename()));
 
         if ($this->phpunitConfiguration->getExecutionOrder() === TestSuiteSorter::ORDER_RANDOMIZED) {
-            $this->output->writeln($this->colour->format('<effects=bold>Random seed:</>            ' . (string) Util::getPHPUnitTestRunnerArguments()['randomOrderSeed']));
+            $this->headerSection->writeln($this->colour->format('<effects=bold>Random seed:</>            ' . (string) Util::getPHPUnitTestRunnerArguments()['randomOrderSeed']));
         }
 
         if ($this->numberOfColumns === 16) {
-            $this->output->writeln($this->colour->format(' <warning>FAIL</>  Less than 16 columns requested, number of columns set to 16.') . \PHP_EOL);
+            $this->headerSection->writeln($this->colour->format(' <warning>FAIL</>  Less than 16 columns requested, number of columns set to 16.') . \PHP_EOL);
         }
 
         if ($runtime->discardsComments()) {
-            $this->output->writeln($this->colour->format(' <warning>WARN</>  opcache.save_comments=0 set; annotations will not work.') . \PHP_EOL);
+            $this->headerSection->writeln($this->colour->format(' <warning>WARN</>  opcache.save_comments=0 set; annotations will not work.') . \PHP_EOL);
         }
 
         $phpunitConfigurationHasErrors = $this->phpunitConfiguration->hasValidationErrors();
 
         if ($phpunitConfigurationHasErrors) {
-            $this->output->writeln($this->colour->format(\PHP_EOL . ' <warning>WARN</>  The PHPUnit configuration file did not pass validation!'));
-            $this->output->writeln('       The following problems have been detected:' . \PHP_EOL);
+            $this->headerSection->writeln($this->colour->format(\PHP_EOL . ' <warning>WARN</>  The PHPUnit configuration file did not pass validation!'));
+            $this->headerSection->writeln('       The following problems have been detected:' . \PHP_EOL);
 
-            $this->writeConfigurationErrors($this->phpunitConfiguration->getValidationErrors());
+            $this->writeConfigurationErrors($this->headerSection, $this->phpunitConfiguration->getValidationErrors());
         }
 
         $configurationHasErrors = $this->configuration->hasValidationErrors();
 
         if ($configurationHasErrors) {
-            $this->output->writeln($this->colour->format(\PHP_EOL . ' <warning>WARN</>  The Testomat configuration file did not pass validation!'));
-            $this->output->writeln('       The following problems have been detected:' . \PHP_EOL);
+            $this->headerSection->writeln($this->colour->format(\PHP_EOL . ' <warning>WARN</>  The Testomat configuration file did not pass validation!'));
+            $this->headerSection->writeln('       The following problems have been detected:' . \PHP_EOL);
 
-            $this->writeConfigurationErrors($this->configuration->getValidationErrors());
+            $this->writeConfigurationErrors($this->headerSection, $this->configuration->getValidationErrors());
         }
 
-        $this->output->writeln($this->colour->format(\Safe\sprintf('%s<effects=bold>Test Cases:</>%s', $configurationHasErrors || $phpunitConfigurationHasErrors ? '' : \PHP_EOL, \PHP_EOL)));
+        $this->headerSection->writeln($this->colour->format(\Safe\sprintf('%s<effects=bold>Test Cases:</>%s', $configurationHasErrors || $phpunitConfigurationHasErrors ? '' : \PHP_EOL, \PHP_EOL)));
     }
 
     /**
@@ -393,14 +406,14 @@ abstract class AbstractStyle implements StyleContract
      */
     protected function writeSummary(int $assertions): void
     {
-        $this->output->writeln(
+        $this->footerSection->writeln(
             $this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Assertions made: </><fg=default>%s</>', (string) $assertions))
         );
 
-        $this->output->writeln(
+        $this->footerSection->writeln(
             $this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Time:            </><fg=default>%s</>', Timer::secondsToTimeString(SBTimer::stop())))
         );
-        $this->output->writeln(
+        $this->footerSection->writeln(
             $this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Memory:          </><fg=default>%s</>', SBTimer::bytesToString(memory_get_peak_usage(true))))
         );
     }
@@ -410,12 +423,12 @@ abstract class AbstractStyle implements StyleContract
      */
     protected function stop(State $state, string $reason): void
     {
-        $this->output->writeln($this->colour->format(\Safe\sprintf(\PHP_EOL . '<fg=light_blue>Note: %s</>' . \PHP_EOL, $reason)));
+        $this->contentSection->writeln($this->colour->format(\Safe\sprintf(\PHP_EOL . '<fg=light_blue>Note: %s</>' . \PHP_EOL, $reason)));
 
         $tests = $this->calculateTests($state);
 
         if (\count($tests) !== 0) {
-            $this->output->writeln($this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Tests:           </>%s', implode(', ', $tests))));
+            $this->contentSection->writeln($this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Tests:           </>%s', implode(', ', $tests))));
         }
 
         $this->writeSummary(\count($state->suiteTests));
@@ -430,7 +443,7 @@ abstract class AbstractStyle implements StyleContract
         if ($countAssertions !== 0) {
             $reportLength = $this->configuration->getOverAssertiveReportLength();
 
-            $this->output->writeln($this->colour->format(
+            $this->errorSection->writeln($this->colour->format(
                 \PHP_EOL . sprintf(
                     '<fg=yellow;effects=bold>Recorded %s test%s that has more assertion than %s (only the latest %s tests are shown):</>',
                     $countAssertions,
@@ -444,7 +457,7 @@ abstract class AbstractStyle implements StyleContract
             arsort($assertions);
 
             foreach (\array_slice($assertions, 0, $reportLength, true) as $test) {
-                $this->output->writeln($this->colour->format(
+                $this->errorSection->writeln($this->colour->format(
                     sprintf(
                         '<fg=default> %s assertion%s in %s::%s <effects=bold>(expected < %s)</></>',
                         $test->assertions,
@@ -467,7 +480,7 @@ abstract class AbstractStyle implements StyleContract
         $countSlowTests = \count($slow);
 
         if ($countSlowTests !== 0) {
-            $this->output->writeln($this->colour->format(
+            $this->errorSection->writeln($this->colour->format(
                 \PHP_EOL . sprintf(
                     '<fg=yellow;effects=bold>Recorded %s slow test%s (only the slowest %s tests are shown):</>',
                     $countSlowTests,
@@ -480,7 +493,7 @@ abstract class AbstractStyle implements StyleContract
             arsort($slow);
 
             foreach (\array_slice($slow, 0, $reportLength, true) as $test) {
-                $this->output->writeln($this->colour->format(
+                $this->errorSection->writeln($this->colour->format(
                     sprintf(
                         '<fg=default> [%s] to run %s::%s <effects=bold>(expected < %s)</></>',
                         Timer::secondsToTimeString($test->time),
@@ -496,25 +509,25 @@ abstract class AbstractStyle implements StyleContract
     /**
      * @param array<int, array<int, string>> $configurationErrors
      */
-    private function writeConfigurationErrors(array $configurationErrors): void
+    private function writeConfigurationErrors(TerminalSection $headerSection, array $configurationErrors): void
     {
         foreach ($configurationErrors as $line => $errors) {
-            $this->output->writeln($this->colour->format(\Safe\sprintf(' <warning>⚠</>   <fg=white>Line %s</>  %s%s', $line, \count($errors) > 1 ? '• ' : '', $errors[0])));
+            $headerSection->writeln($this->colour->format(\Safe\sprintf(' <warning>⚠</>   <fg=white>Line %s</>  %s%s', $line, \count($errors) > 1 ? '• ' : '', $errors[0])));
 
             unset($errors[0]);
 
             foreach ($errors as $error) {
-                $this->output->writeln("              • {$error}");
+                $headerSection->writeln("              • {$error}");
             }
 
-            $this->output->writeln('');
+            $headerSection->writeln('');
         }
     }
 
     private function writeDifferentResultsOnConfigurationValidationErrors(): void
     {
         if ($this->phpunitConfiguration->hasValidationErrors() || $this->configuration->hasValidationErrors()) {
-            $this->output->writeln($this->colour->format('<warning>Test results may not be as expected. Some configuration validation errors were found.</>' . \PHP_EOL));
+            $this->errorSection->writeln($this->colour->format('<warning>Test results may not be as expected. Some configuration validation errors were found.</>' . \PHP_EOL));
         }
     }
 }

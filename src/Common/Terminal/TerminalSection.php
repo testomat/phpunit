@@ -61,11 +61,11 @@ final class TerminalSection extends StreamOutput
      */
     public function clear(?int $lines = null): void
     {
-        if (empty($this->content)) {
+        if (\count($this->content) === 0) {
             return;
         }
 
-        if ($lines) {
+        if ($lines !== null) {
             array_splice($this->content, -($lines * 2)); // Multiply lines by 2 to cater for each new line added between content
         } else {
             $lines = $this->lines;

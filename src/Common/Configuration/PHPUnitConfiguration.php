@@ -127,6 +127,15 @@ final class PHPUnitConfiguration
         return $this->getPHPUnitConfigurationV9()->stopOnFailure();
     }
 
+    public function stopOnDefect(): bool
+    {
+        if ($this->isConfigurationV8) {
+            return $this->getPHPUnitConfigurationV8()['stopOnDefect'] ?? false;
+        }
+
+        return $this->getPHPUnitConfigurationV9()->stopOnDefect();
+    }
+
     public function getExecutionOrder(): int
     {
         if ($this->isConfigurationV8) {
@@ -134,6 +143,37 @@ final class PHPUnitConfiguration
         }
 
         return $this->getPHPUnitConfigurationV9()->executionOrder();
+    }
+
+    public function getCodeCoverage(): CodeCoverage
+    {
+        if ($this->isConfigurationV8) {
+            $loggingConfiguration = $this->phpunitConfiguration->getLoggingConfiguration();
+
+            $showUncoveredFiles = $loggingConfiguration['coverageTextShowUncoveredFiles'] ?? null;
+            $showOnlySummary = $loggingConfiguration['coverageTextShowOnlySummary'] ?? null;
+            $lowUpperBound = $loggingConfiguration['lowUpperBound'] ?? 50;
+            $highLowerBound = $loggingConfiguration['highLowerBound'] ?? 90;
+        } else {
+            $loggingConfiguration = $this->phpunitConfiguration->logging();
+
+            $showUncoveredFiles = null;
+            $showOnlySummary = null;
+            $lowUpperBound = 50;
+            $highLowerBound = 90;
+
+            if ($loggingConfiguration->hasCodeCoverageText()) {
+                $showUncoveredFiles = $loggingConfiguration->codeCoverageText()->showUncoveredFiles();
+                $showOnlySummary = $loggingConfiguration->codeCoverageText()->showOnlySummary();
+            }
+
+            if ($loggingConfiguration->hasCodeCoverageHtml()) {
+                $lowUpperBound = $loggingConfiguration->codeCoverageHtml()->lowUpperBound();
+                $highLowerBound = $loggingConfiguration->codeCoverageHtml()->highLowerBound();
+            }
+        }
+
+        return new CodeCoverage($showUncoveredFiles, $showOnlySummary, $lowUpperBound, $highLowerBound);
     }
 
     private function getPHPUnitConfigurationV8(): array
