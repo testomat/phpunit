@@ -32,7 +32,7 @@ final class Compact extends AbstractStyle
             $tests = $this->calculateTests($state);
 
             if (\count($tests) !== 0) {
-                $this->output->writeln([
+                $this->footerSection->writeln([
                     '',
                     '',
                     $this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Tests:           </>%s', implode(', ', $tests))),
