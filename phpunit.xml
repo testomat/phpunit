@@ -25,6 +25,9 @@
     stopOnFailure="false"
     stopOnIncomplete="false"
     stopOnSkipped="false"
+    stopOnDefect="false"
+    stopOnRisky="false"
+    stopOnWarning="false"
     printerClass="Testomat\PHPUnit\Printer\Printer"
 >
     <php>

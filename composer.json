@@ -31,8 +31,7 @@
     },
     "require-dev": {
         "ext-json": "*",
-        "brianium/paratest": "^4.0",
-        "symplify/monorepo-builder": "^7.2"
+        "brianium/paratest": "^4.0"
     },
     "config": {
         "preferred-install": "dist",

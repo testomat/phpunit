@@ -19,8 +19,9 @@ use Testomat\PHPUnit\Common\Configuration\Collection;
 /**
  * @internal
  *
+ * @covers \Testomat\PHPUnit\Common\Configuration\Collection
+ *
  * @small
- * @coversNothing
  */
 final class CollectionTest extends TestCase
 {

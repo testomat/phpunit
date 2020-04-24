@@ -61,24 +61,10 @@ final class Expanded extends AbstractStyle
             return;
         }
 
-        $this->footer->clear();
-
-        if (! self::$firstLine) {
-            self::$firstLine = true;
-
-            $this->output->writeln('');
-        }
-
-        $break = \PHP_EOL;
-
-        if (self::$firstLine) {
-            self::$firstLine = false;
-
-            $break = '';
-        }
+        $this->footerSection->clear();
 
         if ($state->headerPrinted === false) {
-            $this->output->writeln($break . $this->titleLineFrom(
+            $this->contentSection->writeln($this->titleLineFrom(
                 $state->getTestCaseTitleColor(),
                 $state->getTestCaseTitle(),
                 $state->testCaseName
@@ -88,7 +74,7 @@ final class Expanded extends AbstractStyle
         }
 
         $state->eachTestCaseTests(function (TestResultContract $testResult): void {
-            $this->output->writeln($this->testLineFrom(
+            $this->contentSection->writeln($this->testLineFrom(
                 $testResult->type,
                 $testResult->icon,
                 $testResult->time,
@@ -97,6 +83,8 @@ final class Expanded extends AbstractStyle
                 $testResult->warning
             ));
         });
+
+        $this->contentSection->writeln('');
     }
 
     /**
@@ -107,7 +95,7 @@ final class Expanded extends AbstractStyle
         $runs = [];
 
         if ($testCase) {
-            $runs[] = \PHP_EOL . $this->titleLineFrom(
+            $runs[] = $this->titleLineFrom(
                 TestResult::RUNS,
                 'RUNS',
                 \get_class($testCase)
@@ -121,18 +109,15 @@ final class Expanded extends AbstractStyle
                 $testResult->time,
                 $testResult->isSlow,
                 $testResult->description
-            );
+            ) . \PHP_EOL;
         }
 
         $tests = $this->calculateTests($state);
 
         if (\count($tests) !== 0) {
-            $this->footer->overwrite(
-                array_merge($runs, [
-                    '',
-                    $this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Tests:           </>%s', implode(', ', $tests))),
-                ])
-            );
+            $runs[] = $this->colour->format(\Safe\sprintf('<fg=default;effects=bold>Tests:           </>%s', implode(', ', $tests)));
+
+            $this->footerSection->overwrite($runs);
         }
     }
 
@@ -183,8 +168,8 @@ final class Expanded extends AbstractStyle
 
         $message = ' ' . $this->colour->format(\Safe\sprintf('<%s>%s </>', TestResult::MAPPER[$theme], $icon));
 
-        if ($time !== null && $this->configuration->isSpeedTrapActive()) {
-            $message .= $this->colour->format(\Safe\sprintf('<%s>%s</>', $isSlow ? TestResult::MAPPER[BaseTestRunner::STATUS_WARNING] : 'fg=white', Util::getPreparedTimeString($time)));
+        if ($time !== null) {
+            $message .= $this->colour->format(\Safe\sprintf('<%s>%s</>', $isSlow ? TestResult::MAPPER[BaseTestRunner::STATUS_WARNING] : 'fg=white', Util::getPreparedTimeString($time, true)));
         }
 
         $message .= $this->colour->format(\Safe\sprintf('<fg=default>%s</>', $description));

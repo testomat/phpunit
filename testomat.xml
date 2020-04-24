@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="src/Common/Schema/testomat.xsd"
 >
-    <printer type="compact" show_error_on="end">
+    <printer type="expanded" show_error_on="end">
         <exclude>
             <directory>vendor/phpunit/phpunit/src</directory>
             <directory>vendor/mockery/mockery</directory>

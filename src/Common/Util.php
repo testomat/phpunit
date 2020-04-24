@@ -115,7 +115,7 @@ final class Util
         return self::$testomatConfigurationCache = $configuration;
     }
 
-    public static function getPreparedTimeString(float $time): string
+    public static function getPreparedTimeString(float $time, bool $withOutMs = false): string
     {
         $timeString = Timer::secondsToTimeString($time);
 
@@ -133,6 +133,10 @@ final class Util
             if ((int) filter_var($timeString, \FILTER_SANITIZE_NUMBER_INT) >= 10) {
                 $space = ' ';
             }
+        }
+
+        if ($withOutMs && ($length = strpos($timeString, ',')) !== false) {
+            return sprintf('  [%s]%s', substr($timeString, 0, $length), $space);
         }
 
         return sprintf('  [%s]%s', $timeString, $space);
