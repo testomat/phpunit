@@ -15,6 +15,7 @@ namespace Testomat\PHPUnit\Printer;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\BaseTestRunner;
+use SebastianBergmann\Exporter\Exporter;
 use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 
 /**
@@ -221,19 +222,23 @@ final class TestResult implements TestResultContract
         $name = trim($name);
 
         // Finally, lower case everything
-        if (false === $encoding = mb_detect_encoding($name, null, true)) {
+        if (! function_exists('mb_detect_encoding') || false === $encoding = mb_detect_encoding($name, null, true)) {
             $name = strtolower($name);
         } else {
             $name = mb_strtolower($name, $encoding);
         }
 
         // Add the dataset name if it has one
-        if ($dataName = $testCase->dataName()) {
-            if (\is_int($dataName)) {
-                $name .= sprintf(' with data set #%d', $dataName);
-            } else {
-                $name .= sprintf(' with data set "%s"', $dataName);
+        $providedData = $testCase->getProvidedData();
+
+        if (count($providedData) !== 0) {
+            $exporter = new Exporter();
+
+            foreach ($providedData as $key => $value) {
+                $providedData[$key] = $exporter->shortenedExport($value);
             }
+
+            $name .= \Safe\sprintf('<fg=white> with</> [%s]', implode(', ', $providedData));
         }
 
         return $name;

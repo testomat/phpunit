@@ -15,6 +15,7 @@ namespace Testomat\PHPUnit\Common;
 
 use Closure;
 use PHPUnit\Runner\Version;
+use PHPUnit\TextUI\TestRunner;
 use Testomat\PHPUnit\Common\Configuration\Configuration;
 use Testomat\PHPUnit\Common\Configuration\Loader;
 use Testomat\PHPUnit\Common\Contract\Exception\RuntimeException;
@@ -32,17 +33,13 @@ final class Util
     private static $testomatConfigurationCache;
 
     /**
-     * Returns a callback that can read private variables from object.
+     * @internal
      */
-    public static function getGenericPropertyReader(): Closure
+    public static function reset(): void
     {
-        return function &(object $object, string $property) {
-            $value = &Closure::bind(function &() use ($property) {
-                return $this->{$property};
-            }, $object, $object)->__invoke();
-
-            return $value;
-        };
+        self::$phpunitArgumentsCache = null;
+        self::$phpunitConfigurationCache = null;
+        self::$testomatConfigurationCache = null;
     }
 
     public static function getPHPUnitTestRunnerArguments(): array
@@ -52,12 +49,12 @@ final class Util
         }
 
         foreach (debug_backtrace() as $trace) {
-            if (isset($trace['object']) && $trace['object'] instanceof \PHPUnit\TextUI\TestRunner) {
+            if (isset($trace['object']) && $trace['object'] instanceof TestRunner) {
                 return self::$phpunitArgumentsCache = $trace['args'][1];
             }
         }
 
-        throw new RuntimeException('.');
+        throw new RuntimeException(\Safe\sprintf('Failed to get a PHPUnit arguments from [%s] instance.', TestRunner::class));
     }
 
     /**
@@ -72,11 +69,11 @@ final class Util
         }
 
         $arguments = self::getPHPUnitTestRunnerArguments();
-        /** @var \PHPUnit\Util\Configuration $configuration */
+        /** @var \PHPUnit\TextUI\Configuration\Configuration|\PHPUnit\Util\Configuration $configuration */
         $configuration = $arguments['configuration'] ?? null;
 
         if ($configuration === null) {
-            throw new RuntimeException('@todo.');
+            throw new RuntimeException('Failed to load the PHPUnit configuration instance.');
         }
 
         return self::$phpunitConfigurationCache = $configuration;
