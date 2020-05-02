@@ -31,7 +31,6 @@ use Testomat\PHPUnit\Common\Terminal\TerminalSection;
 use Testomat\PHPUnit\Common\Timer;
 use Testomat\PHPUnit\Common\Util;
 use Testomat\PHPUnit\Printer\Contract\Style as StyleContract;
-use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 use Testomat\PHPUnit\Printer\Exception\Renderer as ExceptionRenderer;
 use Testomat\PHPUnit\Printer\State;
 use Testomat\PHPUnit\Printer\TestResult;
@@ -143,15 +142,10 @@ abstract class AbstractStyle implements StyleContract
      */
     public function addWarning(State $state, TestCase $test, Warning $exception, float $time): void
     {
-        $stopOnWarning = $this->phpunitConfiguration->stopOnWarning();
-        $stopOnDefect = $this->phpunitConfiguration->stopOnDefect();
-
-        if ($stopOnWarning || $stopOnDefect) {
+        if (($stopOnWarning = $this->phpunitConfiguration->stopOnWarning()) || $this->phpunitConfiguration->stopOnDefect()) {
             $this->writeCurrentRecap($state);
 
-            if ($stopOnWarning || $stopOnDefect) {
-                $this->stop($state, \Safe\sprintf('You configured PHPUnit to stop on a %s.', $stopOnWarning ? 'warning' : 'defect'));
-            }
+            $this->stop($state, \Safe\sprintf('You configured PHPUnit to stop on a %s.', $stopOnWarning ? 'warning' : 'defect'));
         }
     }
 
@@ -160,12 +154,10 @@ abstract class AbstractStyle implements StyleContract
      */
     public function addIncompleteTest(State $state, TestCase $test, Throwable $t, float $time): void
     {
-        if ($stopOnIncomplete = $this->phpunitConfiguration->stopOnIncomplete()) {
+        if ($this->phpunitConfiguration->stopOnIncomplete()) {
             $this->writeCurrentRecap($state);
 
-            if ($stopOnIncomplete) {
-                $this->stop($state, 'You configured PHPUnit to stop on a incomplete test.');
-            }
+            $this->stop($state, 'You configured PHPUnit to stop on a incomplete test.');
         }
     }
 
@@ -191,12 +183,10 @@ abstract class AbstractStyle implements StyleContract
      */
     public function addSkippedTest(State $state, TestCase $test, Throwable $t, float $time): void
     {
-        if ($stopOnSkipped = $this->phpunitConfiguration->stopOnSkipped()) {
+        if ($this->phpunitConfiguration->stopOnSkipped()) {
             $this->writeCurrentRecap($state);
 
-            if ($stopOnSkipped) {
-                $this->stop($state, 'You configured PHPUnit to stop on a skipped test.');
-            }
+            $this->stop($state, 'You configured PHPUnit to stop on a skipped test.');
         }
     }
 
@@ -235,7 +225,11 @@ abstract class AbstractStyle implements StyleContract
         if ($stopOnError || ($this->configuration->showErrorOn() === Configuration::SHOW_ERROR_ON_TEST && $this->configuration->getType() === Configuration::TYPE_EXPANDED)) {
             $this->writeCurrentRecap($state);
 
-            $this->contentSection->writeln(\PHP_EOL . $state->getLastTestCase()->failureContent);
+            $lastTestCase = $state->getLastTestCase();
+
+            if ($lastTestCase !== null) {
+                $this->contentSection->writeln(\PHP_EOL . $lastTestCase->failureContent);
+            }
 
             if ($stopOnError) {
                 $this->stop($state, 'You configured PHPUnit to stop on a error.');
@@ -273,8 +267,11 @@ abstract class AbstractStyle implements StyleContract
 
         if ($stopOnFailure || $stopOnDefect || ($this->configuration->showErrorOn() === Configuration::SHOW_ERROR_ON_TEST && $this->configuration->getType() === Configuration::TYPE_EXPANDED)) {
             $this->writeCurrentRecap($state);
+            $lastTestCase = $state->getLastTestCase();
 
-            $this->contentSection->writeln(\PHP_EOL . $state->getLastTestCase()->failureContent);
+            if ($lastTestCase !== null) {
+                $this->contentSection->writeln(\PHP_EOL . $lastTestCase->failureContent);
+            }
 
             if ($stopOnFailure || $stopOnDefect) {
                 $this->stop($state, \Safe\sprintf('You configured PHPUnit to stop on a %s.', $stopOnFailure ? 'failure' : 'defect'));
@@ -290,13 +287,13 @@ abstract class AbstractStyle implements StyleContract
         $this->writeSummary($numAssertions);
 
         if ($this->configuration->isSpeedTrapActive()) {
-            $this->writeSlowTests(array_filter($state->suiteTests, static function (TestResultContract $testResult) {
+            $this->writeSlowTests(array_filter($state->suiteTests, static function (TestResult $testResult): bool {
                 return $testResult->isSlow;
             }));
         }
 
         if ($this->configuration->isOverAssertiveActive()) {
-            $this->writeOverAssertiveTests(array_filter($state->suiteTests, static function (TestResultContract $testResult) {
+            $this->writeOverAssertiveTests(array_filter($state->suiteTests, static function (TestResult $testResult): bool {
                 return $testResult->isOverAssertive;
             }));
         }
@@ -307,7 +304,7 @@ abstract class AbstractStyle implements StyleContract
             $showErrors = false;
         }
 
-        $errors = array_filter($state->suiteTests, static function (TestResultContract $testResult) {
+        $errors = array_filter($state->suiteTests, static function (TestResult $testResult): bool {
             return $testResult->type === BaseTestRunner::STATUS_FAILURE || $testResult->type === BaseTestRunner::STATUS_ERROR;
         });
 
@@ -331,7 +328,7 @@ abstract class AbstractStyle implements StyleContract
     public function writeEmptyTestMessage(State $state): void
     {
         if (\count($state->testCaseTests) === 0) {
-            $this->output->writeln($this->colour->format(\Safe\sprintf('%s <fg=yellow>No tests executed!</>%s', $this->phpunitConfiguration->isConfigurationV8() ? '' : \PHP_EOL, \PHP_EOL)));
+            $this->footerSection->writeln($this->colour->format(\Safe\sprintf('%s <fg=yellow>No tests executed!</>%s', $this->phpunitConfiguration->isConfigurationV8() ? '' : \PHP_EOL, \PHP_EOL)));
 
             $this->writeDifferentResultsOnConfigurationValidationErrors();
         }
@@ -379,6 +376,8 @@ abstract class AbstractStyle implements StyleContract
         $this->headerSection->writeln($this->colour->format(\Safe\sprintf('%s<effects=bold>Test Cases:</>%s', $configurationHasErrors || $phpunitConfigurationHasErrors ? '' : \PHP_EOL, \PHP_EOL)));
     }
 
+    abstract public function writeCurrentRecap(State $state): void;
+
     /**
      * @return array<int, string>
      */
@@ -387,14 +386,14 @@ abstract class AbstractStyle implements StyleContract
         $tests = [];
 
         foreach (self::TYPES as $type) {
-            if ($countTests = $state->countTestsInTestSuiteBy($type)) {
+            if (0 !== $countTests = $state->countTestsInTestSuiteBy($type)) {
                 $tests[] = $this->colour->format(\Safe\sprintf('<%s>%s : %s</>', TestResult::MAPPER[$type], $countTests, TestResult::MAPPER[$type]));
             }
         }
 
-        $pending = $state->suiteTotalTests - $state->testSuiteTestsCount();
+        $pending = (int) $state->suiteTotalTests - $state->testSuiteTestsCount();
 
-        if ($pending) {
+        if ($pending > 0) {
             $tests[] = $this->colour->format(\Safe\sprintf('<%s>%s : pending</>', TestResult::MAPPER[TestResult::RUNS], $pending));
         }
 
@@ -472,7 +471,7 @@ abstract class AbstractStyle implements StyleContract
     }
 
     /**
-     * @param array<int, object> $slow
+     * @param array<int, \Testomat\PHPUnit\Printer\TestResult> $slow
      */
     private function writeSlowTests(array $slow): void
     {
@@ -493,10 +492,13 @@ abstract class AbstractStyle implements StyleContract
             arsort($slow);
 
             foreach (\array_slice($slow, 0, $reportLength, true) as $test) {
+                /** @var float $time */
+                $time = $test->time;
+
                 $this->errorSection->writeln($this->colour->format(
                     sprintf(
                         '<fg=default> [%s] to run %s::%s <effects=bold>(expected < %s)</></>',
-                        Timer::secondsToTimeString($test->time),
+                        Timer::secondsToTimeString($time),
                         $test->class,
                         $test->method,
                         Timer::secondsToTimeString($test->speedTrapThreshold / 1000)

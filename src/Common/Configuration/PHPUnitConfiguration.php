@@ -150,15 +150,15 @@ final class PHPUnitConfiguration
         if ($this->isConfigurationV8) {
             $loggingConfiguration = $this->phpunitConfiguration->getLoggingConfiguration();
 
-            $showUncoveredFiles = $loggingConfiguration['coverageTextShowUncoveredFiles'] ?? null;
-            $showOnlySummary = $loggingConfiguration['coverageTextShowOnlySummary'] ?? null;
+            $showUncoveredFiles = $loggingConfiguration['coverageTextShowUncoveredFiles'] ?? true;
+            $showOnlySummary = $loggingConfiguration['coverageTextShowOnlySummary'] ?? false;
             $lowUpperBound = $loggingConfiguration['lowUpperBound'] ?? 50;
             $highLowerBound = $loggingConfiguration['highLowerBound'] ?? 90;
         } else {
             $loggingConfiguration = $this->phpunitConfiguration->logging();
 
-            $showUncoveredFiles = null;
-            $showOnlySummary = null;
+            $showUncoveredFiles = true;
+            $showOnlySummary = false;
             $lowUpperBound = 50;
             $highLowerBound = 90;
 

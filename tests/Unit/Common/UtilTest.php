@@ -30,6 +30,9 @@ class UtilTest extends TestCase
         self::assertSame($expected, Util::getPreparedTimeString($time, $whitoutMs));
     }
 
+    /**
+     * @return iterable<array<int, int|float|string|bool>>
+     */
     public static function provideSecondsToTimeStringCases(): iterable
     {
         yield [0.10, '  [100 ms]  '];

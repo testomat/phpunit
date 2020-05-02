@@ -17,13 +17,14 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Runner\BaseTestRunner;
 use Testomat\PHPUnit\Common\Util;
-use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 use Testomat\PHPUnit\Printer\State;
 use Testomat\PHPUnit\Printer\TestResult;
 
 final class Expanded extends AbstractStyle
 {
     /**
+     * @phpstan-param \PHPUnit\Framework\TestSuite<\PHPUnit\Framework\Test> $suite
+     *
      * {@inheritdoc}
      */
     public function endTestSuite(State $state, TestSuite $suite, bool $ended, int $numAssertions): void
@@ -57,7 +58,7 @@ final class Expanded extends AbstractStyle
      */
     public function writeCurrentRecap(State $state): void
     {
-        if (! $state->testCaseTestsCount()) {
+        if ($state->testCaseTestsCount() === 0) {
             return;
         }
 
@@ -73,7 +74,7 @@ final class Expanded extends AbstractStyle
             $state->headerPrinted = true;
         }
 
-        $state->eachTestCaseTests(function (TestResultContract $testResult): void {
+        $state->eachTestCaseTests(function (TestResult $testResult): void {
             $this->contentSection->writeln($this->testLineFrom(
                 $testResult->type,
                 $testResult->icon,
@@ -94,7 +95,7 @@ final class Expanded extends AbstractStyle
     {
         $runs = [];
 
-        if ($testCase) {
+        if ($testCase !== null) {
             $runs[] = $this->titleLineFrom(
                 TestResult::RUNS,
                 'RUNS',
@@ -135,6 +136,7 @@ final class Expanded extends AbstractStyle
             $nameParts = explode(\DIRECTORY_SEPARATOR, $testCaseName);
         }
 
+        /** @var string $highlightedPart */
         $highlightedPart = array_pop($nameParts);
 
         if ($isFile) {
@@ -159,7 +161,7 @@ final class Expanded extends AbstractStyle
         string $description,
         string $warning = ''
     ): string {
-        if (! empty($warning)) {
+        if ($warning !== '') {
             $warning = sprintf(
                 '→ %s',
                 $warning

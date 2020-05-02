@@ -28,7 +28,10 @@ final class CollectionTest extends TestCase
     /** @var array<int|string, mixed> */
     private $arrayData;
 
-    /** @var \Testomat\PHPUnit\Common\Configuration\Collection */
+    /**
+     * @phpstan-var \Testomat\PHPUnit\Common\Configuration\Collection<string>
+     * @var \Testomat\PHPUnit\Common\Configuration\Collection
+     */
     private $collection;
 
     protected function setUp(): void

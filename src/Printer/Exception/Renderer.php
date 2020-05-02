@@ -88,7 +88,7 @@ final class Renderer
 
         $frames = $inspector->getFrames()->filter(function (Frame $frame): bool {
             foreach ($this->ignore as $ignore) {
-                if (preg_match($ignore, $frame->getFile())) {
+                if (\Safe\preg_match($ignore, $frame->getFile()) === 1) {
                     return false;
                 }
             }

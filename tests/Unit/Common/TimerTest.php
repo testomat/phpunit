@@ -29,6 +29,9 @@ class TimerTest extends TestCase
         self::assertSame($expected, Timer::secondsToTimeString($time));
     }
 
+    /**
+     * @return iterable<array<int, int|float|string>>
+     */
     public static function provideSecondsToTimeStringCases(): iterable
     {
         yield [0.10, '100 ms'];

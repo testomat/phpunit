@@ -15,8 +15,8 @@ namespace Testomat\PHPUnit\Printer;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\BaseTestRunner;
+use Testomat\PHPUnit\Common\Contract\Exception\RuntimeException;
 use Testomat\PHPUnit\Common\Contract\PHPUnit\PrettyTestCaseName as PrettyTestCaseNameContract;
-use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 
 /**
  * @internal
@@ -33,7 +33,7 @@ final class State
     /**
      * The complete test suite tests.
      *
-     * @var array<int, \Testomat\PHPUnit\Printer\Contract\TestResult>
+     * @var array<int, \Testomat\PHPUnit\Printer\TestResult>
      */
     public $suiteTests = [];
 
@@ -47,14 +47,14 @@ final class State
     /**
      * The current test case tests.
      *
-     * @var array<int, \Testomat\PHPUnit\Printer\Contract\TestResult>
+     * @var array<int, \Testomat\PHPUnit\Printer\TestResult>
      */
     public $testCaseTests = [];
 
     /**
      * The current (test case tests.
      *
-     * @var array<int, \Testomat\PHPUnit\Printer\Contract\TestResult>
+     * @var array<int, \Testomat\PHPUnit\Printer\TestResult>
      */
     public $printedCaseTests = [];
 
@@ -77,7 +77,7 @@ final class State
     /**
      * Adds the given test to the State.
      */
-    public function add(TestResultContract $test): void
+    public function add(TestResult $test): void
     {
         $this->testCaseTests[] = $test;
         $this->printedCaseTests[] = $test;
@@ -175,7 +175,7 @@ final class State
 
     public function countTestsInTestSuiteBy(int $type): int
     {
-        return \count(array_filter($this->suiteTests, static function (TestResultContract $testResult) use ($type) {
+        return \count(array_filter($this->suiteTests, static function (TestResult $testResult) use ($type): bool {
             return $testResult->type === $type;
         }));
     }
@@ -194,9 +194,15 @@ final class State
         return false;
     }
 
-    public function getLastTestCase(): TestResultContract
+    public function getLastTestCase(): ?TestResult
     {
-        return end($this->testCaseTests);
+        $testResult = end($this->testCaseTests);
+
+        if ($testResult === false) {
+            return null;
+        }
+
+        return $testResult;
     }
 
     /**

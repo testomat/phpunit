@@ -22,7 +22,7 @@
         <xs:sequence>
             <xs:element name="exclude">
                 <xs:complexType>
-                    <xs:group ref="pathGroup"/>
+                    <xs:group ref="excludeGroup"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -52,9 +52,9 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:group name="pathGroup">
+    <xs:group name="excludeGroup">
         <xs:sequence>
-            <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:choice maxOccurs="unbounded" minOccurs="1">
                 <xs:element name="directory" type="xs:string"/>
             </xs:choice>
         </xs:sequence>
@@ -62,17 +62,38 @@
 
     <xs:complexType name="speed_trap_type">
         <xs:sequence minOccurs="0">
-            <xs:element name="slow_threshold" type="xs:integer"/>
-            <xs:element name="report_length" type="xs:integer"/>
+            <xs:choice maxOccurs="1" minOccurs="0">
+                <xs:element name="slow_threshold" type="xs:integer"/>
+            </xs:choice>
+            <xs:choice maxOccurs="1" minOccurs="0">
+                <xs:element name="report_length" type="xs:integer"/>
+            </xs:choice>
+            <xs:element name="groups" type="groupsType"/>
         </xs:sequence>
         <xs:attribute default="true" name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="over_assertive_type">
         <xs:sequence minOccurs="0">
-            <xs:element name="threshold" type="xs:integer"/>
-            <xs:element name="report_length" type="xs:integer"/>
+            <xs:choice minOccurs="0">
+                <xs:element name="threshold" type="xs:integer"/>
+            </xs:choice>
+            <xs:choice minOccurs="0">
+                <xs:element name="report_length" type="xs:integer"/>
+            </xs:choice>
+            <xs:element name="groups" type="groupsType"/>
         </xs:sequence>
         <xs:attribute default="true" name="enabled" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="groupsType">
+        <xs:sequence>
+            <xs:element name="group" type="groupType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="groupType">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="threshold" type="xs:string"/>
     </xs:complexType>
 </xs:schema>

@@ -116,6 +116,8 @@ final class TerminalSection extends StreamOutput
     /**
      * At initial stage, cursor is at the end of stream output. This method makes cursor crawl upwards until it hits
      * current section. Then it erases content it crawled through. Optionally, it erases part of current section too.
+     *
+     * @param int|float $numberOfLinesToClearFromCurrentSection
      */
     private function popStreamContentUntilCurrentSection($numberOfLinesToClearFromCurrentSection = 0): string
     {

@@ -10,8 +10,10 @@
         </exclude>
     </printer>
 
-    <speedtrap enabled="true">
-        <slow_threshold>500</slow_threshold>
-        <report_length>10</report_length>
-    </speedtrap>
+    <over_assertive>
+        <threshold>1</threshold>
+        <groups>
+            <group name="test" threshold="1" />
+        </groups>
+    </over_assertive>
 </testomat>

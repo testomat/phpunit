@@ -16,12 +16,11 @@ namespace Testomat\PHPUnit\Printer;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\BaseTestRunner;
 use SebastianBergmann\Exporter\Exporter;
-use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 
 /**
  * @internal
  */
-final class TestResult implements TestResultContract
+final class TestResult
 {
     /**
      * @readonly
@@ -156,14 +155,14 @@ final class TestResult implements TestResultContract
         $this->warning = trim((string) preg_replace("/\r|\n/", ' ', $warning));
     }
 
-    public function setFailureContent(string $content): TestResultContract
+    public function setFailureContent(string $content): self
     {
         $this->failureContent = $content;
 
         return $this;
     }
 
-    public function setNumAssertions(int $numAssertions): TestResultContract
+    public function setNumAssertions(int $numAssertions): self
     {
         $this->numAssertions = $numAssertions;
 
@@ -183,7 +182,7 @@ final class TestResult implements TestResultContract
         return new self($class, $testCase->getName(), self::makeDescription($testCase), $type, self::makeIcon($type), $time, $warning);
     }
 
-    public function setSpeedTrap(bool $isSlow, int $threshold): TestResultContract
+    public function setSpeedTrap(bool $isSlow, int $threshold): self
     {
         $this->isSlow = $isSlow;
         $this->speedTrapThreshold = $threshold;
@@ -191,7 +190,7 @@ final class TestResult implements TestResultContract
         return $this;
     }
 
-    public function setOverAssertive(bool $isOverAssertive, int $overAssertiveThreshold): TestResultContract
+    public function setOverAssertive(bool $isOverAssertive, int $overAssertiveThreshold): self
     {
         $this->isOverAssertive = $isOverAssertive;
         $this->overAssertiveThreshold = $overAssertiveThreshold;

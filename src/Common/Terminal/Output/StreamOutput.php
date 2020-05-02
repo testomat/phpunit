@@ -25,6 +25,9 @@ abstract class StreamOutput
         return $this->stream;
     }
 
+    /**
+     * @param array|string $messages
+     */
     final public function writeln($messages): void
     {
         foreach ((array) $messages as $message) {
@@ -32,6 +35,9 @@ abstract class StreamOutput
         }
     }
 
+    /**
+     * @param array|string $messages
+     */
     final public function write($messages): void
     {
         foreach ((array) $messages as $message) {
