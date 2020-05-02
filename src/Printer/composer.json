@@ -24,6 +24,7 @@
     "require": {
         "php": "^7.3",
         "narrowspark/exception-inspector": "^1.0.2",
+        "ondram/ci-detector": "^3.3",
         "testomat/phpunit-common": "^1.0.0",
         "testomat/terminal-colour": "^1.1.0",
         "phpunit/php-timer": "^2.1.2 || ^3.0.0"

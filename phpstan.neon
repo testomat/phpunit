@@ -1,5 +1,7 @@
 includes:
+    - %currentWorkingDirectory%/../vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
     - %currentWorkingDirectory%/vendor/narrowspark/coding-standard/base_rules.neon
+    - %currentWorkingDirectory%/phpstan-baseline.neon
 
 parameters:
     paths:
@@ -16,5 +18,8 @@ parameters:
 
     excludes_analyse:
         - src/ResultPrinter/Printer.php
+        - tests/Fixture/*
 
     ignoreErrors:
+        - "#Should not use node with type \"Stmt_Echo\", please change the code#"
+        - "#Should not use node with type \"Expr_Exit\", please change the code#"

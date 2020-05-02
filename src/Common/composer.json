@@ -22,6 +22,8 @@
     ],
     "require": {
         "php": "^7.3",
+        "ext-dom": "*",
+        "ext-libxml": "*",
         "thecodingmachine/safe": "^1.1.0"
     },
     "require-dev": {

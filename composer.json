@@ -23,15 +23,19 @@
     ],
     "require": {
         "php": "^7.3",
+        "ext-dom": "*",
+        "ext-libxml": "*",
         "narrowspark/exception-inspector": "^1.0.2",
-        "thecodingmachine/safe": "^1.1.0",
-        "testomat/terminal-colour": "^1.1.0",
+        "ondram/ci-detector": "^3.3",
         "phpunit/php-timer": "^2.1.2 || ^3.1.0",
-        "phpunit/phpunit": "^8.0.0 || ^9.0.0"
+        "phpunit/phpunit": "^8.0.0 || ^9.0.0",
+        "testomat/terminal-colour": "^1.1.0",
+        "thecodingmachine/safe": "^1.1.0"
     },
     "require-dev": {
         "ext-json": "*",
-        "brianium/paratest": "^4.0"
+        "brianium/paratest": "^4.0",
+        "thecodingmachine/phpstan-safe-rule": "^1.0"
     },
     "config": {
         "preferred-install": "dist",
@@ -64,20 +68,27 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "changelog": "composer --working-dir=./.build changelog-generator",
+        "post-install-cmd": "composer --working-dir=./.build install --lock",
+        "post-update-cmd": "composer --working-dir=./.build update --lock",
+        "changelog": "composer --working-dir=./.build changelog",
         "coverage": [
             "phpunit --dump-xdebug-filter=./.build/phpunit/.xdebug-filter.php",
             "phpunit --prepend=./.build/phpunit/.xdebug-filter.php --coverage-html=./.build/phpunit/coverage"
         ],
         "cs": "composer --working-dir=./.build cs -- -v",
         "cs:check": "composer --working-dir=./.build cs:check -- -v",
+        "infection": "composer --working-dir=./.build infection -- --min-covered-msi=73 --min-msi=61",
         "phpstan": "composer --working-dir=./.build phpstan -- --memory-limit=-1",
+        "phpstan:baseline": "composer --working-dir=./.build phpstan:baseline -- --memory-limit=-1",
         "psalm": "composer --working-dir=./.build psalm",
         "psalm:fix": "composer --working-dir=./.build psalm:fix",
-        "infection": "composer --working-dir=./.build infection -- --min-covered-msi=100 --min-msi=100",
-        "test": "phpunit",
-        "post-install-cmd": "composer --working-dir=./.build install --lock",
-        "post-update-cmd": "composer --working-dir=./.build update --lock"
+        "psalm:baseline": "composer --working-dir=./.build psalm:baseline",
+        "rector-src": "composer --working-dir=./.build rector-src",
+        "rector-src:fix": "composer --working-dir=./.build rector-src:fix",
+        "rector-tests": "composer --working-dir=./.build rector-tests",
+        "rector-tests:fix": "composer --working-dir=./.build rector-tests:fix",
+        "req:check": "composer --working-dir=./.build req:check",
+        "test": "phpunit"
     },
     "support": {
         "issues": "https://github.com/testomat/phpunit/issues",

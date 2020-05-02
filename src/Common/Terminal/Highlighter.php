@@ -98,6 +98,7 @@ final class Highlighter
         $output = [];
         $currentType = null;
         $buffer = '';
+        $newType = null;
 
         foreach ($tokens as $token) {
             if (\is_array($token)) {

@@ -24,8 +24,6 @@ final class Timer
     {
         $timeString = SBTimer::secondsToTimeString($time);
 
-        $timeString = str_replace(['milliseconds', 'millisecond', 'millisec', 'seconds'], ['ms', 'ms', 'ms', 'sec'], $timeString);
-
-        return str_replace('minute', 'min', $timeString);
+        return str_replace(['minute', 'milliseconds', 'millisecond', 'millisec', 'seconds'], ['min', 'ms', 'ms', 'ms', 'sec'], $timeString);
     }
 }

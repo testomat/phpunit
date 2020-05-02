@@ -15,10 +15,10 @@ namespace Testomat\PHPUnit\Common\Configuration;
 
 final class CodeCoverage
 {
-    /** @var null|bool */
+    /** @var bool */
     private $showUncoveredFiles;
 
-    /** @var null|bool */
+    /** @var bool */
     private $showOnlySummary;
 
     /** @var int */
@@ -28,8 +28,8 @@ final class CodeCoverage
     private $highLowerBound;
 
     public function __construct(
-        ?bool $showUncoveredFiles,
-        ?bool $showOnlySummary,
+        bool $showUncoveredFiles,
+        bool $showOnlySummary,
         int $lowUpperBound,
         int $highLowerBound
     ) {

@@ -85,25 +85,15 @@ final class Text
     {
         $report = $coverage->getReport();
 
-        $classesPercent = Util::percent(
-            $report->getNumTestedClassesAndTraits(),
-            $report->getNumClassesAndTraits(),
-            true
-        );
-        $methodsPercent = Util::percent(
-            $report->getNumTestedMethods(),
-            $report->getNumMethods(),
-            true
-        );
-        $linesPercent = Util::percent(
-            $report->getNumExecutedLines(),
-            $report->getNumExecutableLines(),
-            true
-        );
-
         if (! $this->showOnlySummary) {
             $this->output->writeln($this->colour->format('<effects=bold>Code Coverage:</>' . \PHP_EOL));
 
+            /**
+             * @psalm-var array{namespace: string, className: string, methodsCovered: float|int, methodCount: int, statementsCovered: int, statementCount: int} $classInfo
+             *
+             * @var string $fullQualifiedPath
+             * @var array<string, string|int> $classInfo
+             */
             foreach ($this->prepareClassCoverage($report) as $fullQualifiedPath => $classInfo) {
                 if ($this->showUncoveredFiles || $classInfo['statementsCovered'] !== 0) {
                     $classPercent = Util::percent(
@@ -122,7 +112,7 @@ final class Text
                     $this->output->writeln($this->colour->format(\Safe\sprintf(
                         ' <fg=white>[</><fg=%s>%s</><fg=white> %%]</>  %s',
                         $color,
-                        str_replace('%', '', $classPercent),
+                        str_replace('%', '', (string) $classPercent),
                         $this->getClassName($classInfo)
                     )));
                 }
@@ -135,25 +125,41 @@ final class Text
             $this->output->write($this->colour->format('<effects=bold>Coverage Summary:</>  '));
         }
 
+        $classesPercent = Util::percent(
+            $report->getNumTestedClassesAndTraits(),
+            $report->getNumClassesAndTraits(),
+            true
+        );
+        $methodsPercent = Util::percent(
+            $report->getNumTestedMethods(),
+            $report->getNumMethods(),
+            true
+        );
+        $linesPercent = Util::percent(
+            $report->getNumExecutedLines(),
+            $report->getNumExecutableLines(),
+            true
+        );
+
         $this->output->write($this->colour->format(\Safe\sprintf(
             '<effects=bold>Classes</> <fg=%s>%s</> %%',
             $this->getCoverageColor($classesPercent),
-            str_replace('%', '', $classesPercent)
+            str_replace('%', '', (string) $classesPercent)
         )));
         $this->output->write($this->colour->format(\Safe\sprintf(
             '   <effects=bold>Methods</> <fg=%s>%s</> %%',
             $this->getCoverageColor($methodsPercent),
-            str_replace('%', '', $methodsPercent)
+            str_replace('%', '', (string) $methodsPercent)
         )));
         $this->output->writeln($this->colour->format(\Safe\sprintf(
             '   <effects=bold>Lines</> <fg=%s>%s</> %%',
             $this->getCoverageColor($linesPercent),
-            str_replace('%', '', $linesPercent)
+            str_replace('%', '', (string) $linesPercent)
         )));
     }
 
     /**
-     * @param int|string $coverage
+     * @param float|int|string $coverage
      */
     private function getCoverageColor($coverage): string
     {
@@ -168,6 +174,11 @@ final class Text
         return 'red';
     }
 
+    /**
+     * @psalm-return array{namespace: string, className: string, methodsCovered: float|int, methodCount: int, statementsCovered: int, statementCount: int}
+     *
+     * @return array<string, string|int>
+     */
     private function prepareClassCoverage(Directory $report): array
     {
         $classCoverage = [];
@@ -179,6 +190,9 @@ final class Text
 
             $classes = $item->getClassesAndTraits();
 
+            /**
+             * @var string $className
+             */
             foreach ($classes as $className => $class) {
                 $classStatements = 0;
                 $coveredClassStatements = 0;
@@ -201,9 +215,9 @@ final class Text
 
                 $namespace = '';
 
-                if (! empty($class['package']['namespace'])) {
+                if (isset($class['package']['namespace']) && $class['package']['namespace'] !== '') {
                     $namespace = '\\' . $class['package']['namespace'] . '::';
-                } elseif (! empty($class['package']['fullPackage'])) {
+                } elseif (isset($class['package']['fullPackage']) && $class['package']['fullPackage'] !== '') {
                     $namespace = '@' . $class['package']['fullPackage'] . '::';
                 }
 
@@ -224,6 +238,7 @@ final class Text
     }
 
     /**
+     * @psalm-param array{namespace: string, className: string, methodsCovered: float|int, methodCount: int, statementsCovered: int, statementCount: int} $classInfo
      * @param array<string, int|string> $classInfo
      */
     private function getClassName(array $classInfo): string

@@ -15,7 +15,6 @@ namespace Testomat\PHPUnit\Printer\Style;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestSuite;
-use Testomat\PHPUnit\Printer\Contract\TestResult as TestResultContract;
 use Testomat\PHPUnit\Printer\State;
 use Testomat\PHPUnit\Printer\TestResult;
 
@@ -61,11 +60,11 @@ final class Compact extends AbstractStyle
      */
     public function writeCurrentRecap(State $state): void
     {
-        if (! $state->testCaseTestsCount()) {
+        if ($state->testCaseTestsCount() === 0) {
             return;
         }
 
-        $state->eachTestCaseTests(function (TestResultContract $testResult): void {
+        $state->eachTestCaseTests(function (TestResult $testResult): void {
             echo $this->testLineFrom($testResult->type, $testResult->icon);
         });
     }
